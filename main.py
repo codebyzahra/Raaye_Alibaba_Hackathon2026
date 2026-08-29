@@ -5,20 +5,33 @@ Run locally:
 """
 
 import logging
-
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
 
+from database import init_db
+from routers.upload import router as upload_router
 from services.absa_engine import MAX_BATCH, analyze_reviews
 
 logging.basicConfig(level=logging.INFO)
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Create SQLite tables on startup."""
+    init_db()
+    yield
+
+
 app = FastAPI(
     title="RAaye ABSA Core",
     description="Aspect-based sentiment analysis for Roman Urdu / code-mixed Daraz reviews.",
-    version="0.1.0",
+    version="0.2.0",
+    lifespan=lifespan,
 )
+
+app.include_router(upload_router)
 
 
 class ABSARequest(BaseModel):
