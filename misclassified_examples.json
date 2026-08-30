@@ -1,0 +1,1789 @@
+[
+  {
+    "review": "Jo product bheji thi woh achi or fresh thi but adrak, lehsan, dhania, podina or kheera nhi aaya.. woh kb tk aaye ga?",
+    "normalized": "jo product bheji thi woh achi or fresh thi but adrak lehsan dhania podina or kheera nahi aaya woh kb tk aaye ga",
+    "gold": "neutral",
+    "predicted": "negative",
+    "aspects": [
+      {
+        "aspect": "product quality",
+        "sentiment": "positive",
+        "confidence": 0.85
+      },
+      {
+        "aspect": "item as described",
+        "sentiment": "negative",
+        "confidence": 0.9
+      }
+    ]
+  },
+  {
+    "review": "I tried few Chinese android box before the performance was very bad even that have 4gb ram so this time I decided to buy haier so far its working smoothly with latest android 11 still I feel its expensive but due to Pakistan dollar rate every product price is increasing",
+    "normalized": "i tried few chinese android box before the performance was very bad even that have 4gb ram so this time i decided to buy haier so far its working smoothly with latest android 11 still i feel its expensive but due to pakistan dollar rate every product price is increasing",
+    "gold": "negative",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "performance",
+        "sentiment": "positive",
+        "confidence": 0.85
+      },
+      {
+        "aspect": "price",
+        "sentiment": "negative",
+        "confidence": 0.7
+      },
+      {
+        "aspect": "brand",
+        "sentiment": "positive",
+        "confidence": 0.8
+      }
+    ]
+  },
+  {
+    "review": "Good product in this price range..",
+    "normalized": "good product in this price range",
+    "gold": "neutral",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "price",
+        "sentiment": "positive",
+        "confidence": 0.8
+      },
+      {
+        "aspect": "product quality",
+        "sentiment": "positive",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "review": "The TV has good color accuracy, but the viewing angles are limited.",
+    "normalized": "the tv has good color accuracy but the viewing angles are limited",
+    "gold": "neutral",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "color accuracy",
+        "sentiment": "positive",
+        "confidence": 0.85
+      },
+      {
+        "aspect": "viewing angles",
+        "sentiment": "negative",
+        "confidence": 0.8
+      }
+    ]
+  },
+  {
+    "review": "Nice product connecting with all apps on android but unfortunately cannot establish connection with ecu of Suzuki Baleno 2003.",
+    "normalized": "nice product connecting with all apps on android but unfortunately cannot establish connection with ecu of suzuki baleno 2003",
+    "gold": "positive",
+    "predicted": "negative",
+    "aspects": [
+      {
+        "aspect": "app connectivity",
+        "sentiment": "positive",
+        "confidence": 0.85
+      },
+      {
+        "aspect": "ecu connection",
+        "sentiment": "negative",
+        "confidence": 0.9
+      }
+    ]
+  },
+  {
+    "review": "Masha allah bahot zabardast headphone hai but iska aagay wala tar patla hai Kya yeh kharab to nahi hoga?",
+    "normalized": "masha allah bahot zabardast headphone hai but iska aagay wala tar patla hai kya yeh kharab to nahi hoga",
+    "gold": "neutral",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "headphone quality",
+        "sentiment": "positive",
+        "confidence": 0.9
+      },
+      {
+        "aspect": "build durability",
+        "sentiment": "negative",
+        "confidence": 0.8
+      }
+    ]
+  },
+  {
+    "review": "Good product quality and it was working but I do t know why it showed the right temperature while I was hatching eggs but after 21 days even, no egg hatched and I don���t know why it was not working as it should",
+    "normalized": "good product quality and it was working but i do t know why it showed the right temperature while i was hatching eggs but after 21 days even no egg hatched and i don t know why it was not working as it should",
+    "gold": "neutral",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "product quality",
+        "sentiment": "positive",
+        "confidence": 0.8
+      },
+      {
+        "aspect": "temperature accuracy",
+        "sentiment": "positive",
+        "confidence": 0.75
+      },
+      {
+        "aspect": "performance",
+        "sentiment": "negative",
+        "confidence": 0.9
+      }
+    ]
+  },
+  {
+    "review": "Best regards",
+    "normalized": "best regards",
+    "gold": "positive",
+    "predicted": "neutral",
+    "aspects": [
+      {
+        "aspect": "overall",
+        "sentiment": "neutral",
+        "confidence": 0.3
+      }
+    ]
+  },
+  {
+    "review": "size don't fit me but the quality is very good packing was very nice ��",
+    "normalized": "size don't fit me but the quality is very good packing was very nice",
+    "gold": "neutral",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "size",
+        "sentiment": "negative",
+        "confidence": 0.8
+      },
+      {
+        "aspect": "quality",
+        "sentiment": "positive",
+        "confidence": 0.9
+      },
+      {
+        "aspect": "packaging",
+        "sentiment": "positive",
+        "confidence": 0.9
+      }
+    ]
+  },
+  {
+    "review": "Got original safeguard soaps in good discounted price.I face issue of 1 missing soap but daraz immediately solve it.Thanks daraz for take care of their customers.One more suggestion that daraz should not send daraz mart products in flyer.They should send it in cardboard box to prevent damage.",
+    "normalized": "got original safeguard soaps in good discounted price i face issue of 1 missing soap but daraz immediately solve it thanks daraz for take care of their customers one more suggestion that daraz should not send daraz mart products in flyer they should send it in cardboard box to prevent damage",
+    "gold": "neutral",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "authenticity",
+        "sentiment": "positive",
+        "confidence": 0.9
+      },
+      {
+        "aspect": "price",
+        "sentiment": "positive",
+        "confidence": 0.8
+      },
+      {
+        "aspect": "customer service",
+        "sentiment": "positive",
+        "confidence": 0.9
+      },
+      {
+        "aspect": "packaging",
+        "sentiment": "neutral",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "review": "assalamualaikum\r\n6 pack ka Keh k 5 pack bhejey hai \r\nshame on you ��",
+    "normalized": "assalamualaikum 6 pack ka keh k 5 pack bhejey hai shame on you",
+    "gold": "neutral",
+    "predicted": "negative",
+    "aspects": [
+      {
+        "aspect": "item as described",
+        "sentiment": "negative",
+        "confidence": 0.95
+      }
+    ]
+  },
+  {
+    "review": "not as good pic i never use it",
+    "normalized": "not as good pic i never use it",
+    "gold": "neutral",
+    "predicted": "negative",
+    "aspects": [
+      {
+        "aspect": "item as described",
+        "sentiment": "negative",
+        "confidence": 0.9
+      }
+    ]
+  },
+  {
+    "review": "the material is ok, but width and length is too small, it is ok for new born baby' s stuff or may be suitable for shoe rack",
+    "normalized": "the material is ok but width and length is too small it is ok for new born baby' s stuff or may be suitable for shoe rack",
+    "gold": "neutral",
+    "predicted": "negative",
+    "aspects": [
+      {
+        "aspect": "material",
+        "sentiment": "neutral",
+        "confidence": 0.6
+      },
+      {
+        "aspect": "size",
+        "sentiment": "negative",
+        "confidence": 0.9
+      }
+    ]
+  },
+  {
+    "review": "best products delivery slow ����",
+    "normalized": "best products delivery slow",
+    "gold": "neutral",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "product quality",
+        "sentiment": "positive",
+        "confidence": 0.8
+      },
+      {
+        "aspect": "delivery",
+        "sentiment": "negative",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "review": "I ordered golden but you send me black... Quality is better...",
+    "normalized": "i ordered golden but you send me black quality is better",
+    "gold": "neutral",
+    "predicted": "negative",
+    "aspects": [
+      {
+        "aspect": "color",
+        "sentiment": "negative",
+        "confidence": 0.9
+      },
+      {
+        "aspect": "quality",
+        "sentiment": "positive",
+        "confidence": 0.8
+      }
+    ]
+  },
+  {
+    "review": "only 2 shirts were up to quality. rest had poor material and had defects like tight neck",
+    "normalized": "only 2 shirts were up to quality rest had poor material and had defects like tight neck",
+    "gold": "negative",
+    "predicted": "neutral",
+    "aspects": [
+      {
+        "aspect": "shirt quality",
+        "sentiment": "neutral",
+        "confidence": 0.8
+      }
+    ]
+  },
+  {
+    "review": "good quality a nice feel but not get any benefit in long term",
+    "normalized": "good quality a nice feel but not get any benefit in long term",
+    "gold": "neutral",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "quality",
+        "sentiment": "positive",
+        "confidence": 0.75
+      },
+      {
+        "aspect": "long-term benefit",
+        "sentiment": "negative",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "review": "doesn't give a smooth shave but it's okay",
+    "normalized": "doesn't give a smooth shave but it's okay",
+    "gold": "neutral",
+    "predicted": "negative",
+    "aspects": [
+      {
+        "aspect": "shave quality",
+        "sentiment": "negative",
+        "confidence": 0.7
+      },
+      {
+        "aspect": "overall performance",
+        "sentiment": "neutral",
+        "confidence": 0.6
+      }
+    ]
+  },
+  {
+    "review": "product theek ha but price K lihaaz se boht costly ha\r\nor daraz waley jitna delivery ka le rahey itney me yaha shop se mil jata \r\nbut Meri kismat harab mujey baad me pta chala",
+    "normalized": "product theek ha but price k lihaaz se boht costly ha or daraz waley jitna delivery ka le rahey itney me yaha shop se mil jata but meri kismat harab mujey baad me pta chala",
+    "gold": "neutral",
+    "predicted": "negative",
+    "aspects": [
+      {
+        "aspect": "product quality",
+        "sentiment": "neutral",
+        "confidence": 0.6
+      },
+      {
+        "aspect": "price",
+        "sentiment": "negative",
+        "confidence": 0.85
+      },
+      {
+        "aspect": "delivery cost",
+        "sentiment": "negative",
+        "confidence": 0.8
+      }
+    ]
+  },
+  {
+    "review": "original hands-free with perfect sound quality, but you should deliver it in a box or at least in bubble wrap to avoid any damages.",
+    "normalized": "original hands free with perfect sound quality but you should deliver it in a box or at least in bubble wrap to avoid any damages",
+    "gold": "neutral",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "authenticity",
+        "sentiment": "positive",
+        "confidence": 0.9
+      },
+      {
+        "aspect": "sound quality",
+        "sentiment": "positive",
+        "confidence": 0.95
+      },
+      {
+        "aspect": "packaging",
+        "sentiment": "negative",
+        "confidence": 0.8
+      }
+    ]
+  },
+  {
+    "review": "The lights work but the remote doesnt i want a working remote",
+    "normalized": "the lights work but the remote doesnt i want a working remote",
+    "gold": "neutral",
+    "predicted": "negative",
+    "aspects": [
+      {
+        "aspect": "lights",
+        "sentiment": "positive",
+        "confidence": 0.8
+      },
+      {
+        "aspect": "remote",
+        "sentiment": "negative",
+        "confidence": 0.9
+      }
+    ]
+  },
+  {
+    "review": "size medium quality no good not bad but ok h recommended h��",
+    "normalized": "size medium quality no good not bad but ok h recommended h",
+    "gold": "neutral",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "quality",
+        "sentiment": "neutral",
+        "confidence": 0.6
+      },
+      {
+        "aspect": "recommendation",
+        "sentiment": "positive",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "review": "Not the same overall okay",
+    "normalized": "not the same overall okay",
+    "gold": "neutral",
+    "predicted": "negative",
+    "aspects": [
+      {
+        "aspect": "item as described",
+        "sentiment": "negative",
+        "confidence": 0.8
+      }
+    ]
+  },
+  {
+    "review": "the quality and packing is decent but I cannot activate both airpods at the same time . The left airpod sensor is not working",
+    "normalized": "the quality and packing is decent but i cannot activate both airpods at the same time the left airpod sensor is not working",
+    "gold": "neutral",
+    "predicted": "negative",
+    "aspects": [
+      {
+        "aspect": "quality",
+        "sentiment": "positive",
+        "confidence": 0.7
+      },
+      {
+        "aspect": "packaging",
+        "sentiment": "positive",
+        "confidence": 0.7
+      },
+      {
+        "aspect": "airpod functionality",
+        "sentiment": "negative",
+        "confidence": 0.9
+      },
+      {
+        "aspect": "left airpod sensor",
+        "sentiment": "negative",
+        "confidence": 0.9
+      }
+    ]
+  },
+  {
+    "review": "Very good product. Quality is good. Delivery was little bit late but it's ok.",
+    "normalized": "very good product quality is good delivery was little bit late but it's ok",
+    "gold": "neutral",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "product quality",
+        "sentiment": "positive",
+        "confidence": 0.8
+      },
+      {
+        "aspect": "delivery",
+        "sentiment": "neutral",
+        "confidence": 0.6
+      }
+    ]
+  },
+  {
+    "review": "would give 7out of 10 ������for this crop top since it's more like a cardigan cut",
+    "normalized": "would give 7out of 10 for this crop top since it's more like a cardigan cut",
+    "gold": "neutral",
+    "predicted": "negative",
+    "aspects": [
+      {
+        "aspect": "cut",
+        "sentiment": "negative",
+        "confidence": 0.8
+      }
+    ]
+  },
+  {
+    "review": "achhi product hai bht but total amount 405 thi but rider ny 460 liye",
+    "normalized": "achhi product hai bohat but total amount 405 thi but rider ny 460 liye",
+    "gold": "neutral",
+    "predicted": "negative",
+    "aspects": [
+      {
+        "aspect": "product quality",
+        "sentiment": "positive",
+        "confidence": 0.7
+      },
+      {
+        "aspect": "price",
+        "sentiment": "negative",
+        "confidence": 0.8
+      }
+    ]
+  },
+  {
+    "review": "Had to return the item due to this reason. You get what you pay for.",
+    "normalized": "had to return the item due to this reason you get what you pay for",
+    "gold": "neutral",
+    "predicted": "negative",
+    "aspects": [
+      {
+        "aspect": "value for money",
+        "sentiment": "negative",
+        "confidence": 0.8
+      }
+    ]
+  },
+  {
+    "review": "packing looking good although product received very late hope to see good result.",
+    "normalized": "packing looking good although product received very late hope to see good result",
+    "gold": "neutral",
+    "predicted": "negative",
+    "aspects": [
+      {
+        "aspect": "packaging",
+        "sentiment": "positive",
+        "confidence": 0.8
+      },
+      {
+        "aspect": "delivery",
+        "sentiment": "negative",
+        "confidence": 0.9
+      }
+    ]
+  },
+  {
+    "review": "Material is good but useless product no results",
+    "normalized": "material is good but useless product no results",
+    "gold": "neutral",
+    "predicted": "negative",
+    "aspects": [
+      {
+        "aspect": "material",
+        "sentiment": "positive",
+        "confidence": 0.8
+      },
+      {
+        "aspect": "product usefulness",
+        "sentiment": "negative",
+        "confidence": 0.9
+      }
+    ]
+  },
+  {
+    "review": "same as shown but they are too big. seemed like small size in picture",
+    "normalized": "same as shown but they are too big seemed like small size in picture",
+    "gold": "neutral",
+    "predicted": "negative",
+    "aspects": [
+      {
+        "aspect": "item as described",
+        "sentiment": "negative",
+        "confidence": 0.9
+      },
+      {
+        "aspect": "size",
+        "sentiment": "negative",
+        "confidence": 0.95
+      }
+    ]
+  },
+  {
+    "review": "product is fine but it doesnt have pink or purple light ��",
+    "normalized": "product is fine but it doesnt have pink or purple light",
+    "gold": "neutral",
+    "predicted": "negative",
+    "aspects": [
+      {
+        "aspect": "product features",
+        "sentiment": "negative",
+        "confidence": 0.85
+      }
+    ]
+  },
+  {
+    "review": "The lights are pretty cool, but only Blue, Green, and Red work, I was hoping for the other colours to work but they aren���t working. I���m going to give t",
+    "normalized": "the lights are pretty cool but only blue green and red work i was hoping for the other colours to work but they aren t working i m going to give t",
+    "gold": "neutral",
+    "predicted": "negative",
+    "aspects": [
+      {
+        "aspect": "lights",
+        "sentiment": "positive",
+        "confidence": 0.8
+      },
+      {
+        "aspect": "color functionality",
+        "sentiment": "negative",
+        "confidence": 0.9
+      }
+    ]
+  },
+  {
+    "review": "potatos not look fresh, ordered for just 11 rupees in 11.11 sale daraz deliver the order within 2 days, super fast service",
+    "normalized": "potatos not look fresh ordered for just 11 rupees in 11 11 sale daraz deliver the order within 2 days super fast service",
+    "gold": "neutral",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "product freshness",
+        "sentiment": "negative",
+        "confidence": 0.8
+      },
+      {
+        "aspect": "price",
+        "sentiment": "positive",
+        "confidence": 0.7
+      },
+      {
+        "aspect": "delivery",
+        "sentiment": "positive",
+        "confidence": 0.95
+      }
+    ]
+  },
+  {
+    "review": "Pack of 6 but receive 7 bags, quality normal/good in this price",
+    "normalized": "pack of 6 but receive 7 bags quality normal good in this price",
+    "gold": "neutral",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "quantity received",
+        "sentiment": "positive",
+        "confidence": 0.9
+      },
+      {
+        "aspect": "quality",
+        "sentiment": "positive",
+        "confidence": 0.75
+      },
+      {
+        "aspect": "price",
+        "sentiment": "positive",
+        "confidence": 0.8
+      }
+    ]
+  },
+  {
+    "review": "I received the tooth brush a little bit late but all the things are perfect.",
+    "normalized": "i received the tooth brush a little bit late but all the things are perfect",
+    "gold": "neutral",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "delivery",
+        "sentiment": "negative",
+        "confidence": 0.7
+      },
+      {
+        "aspect": "item condition",
+        "sentiment": "positive",
+        "confidence": 0.9
+      }
+    ]
+  },
+  {
+    "review": "belt was just OK not as good as the pictures, finishing was cheap",
+    "normalized": "belt was just ok not as good as the pictures finishing was cheap",
+    "gold": "neutral",
+    "predicted": "negative",
+    "aspects": [
+      {
+        "aspect": "belt quality",
+        "sentiment": "neutral",
+        "confidence": 0.6
+      },
+      {
+        "aspect": "finishing",
+        "sentiment": "negative",
+        "confidence": 0.8
+      }
+    ]
+  },
+  {
+    "review": "Best product in this price range. Very heavy duty. However, the finishing is not that good but it still works.",
+    "normalized": "best product in this price range very heavy duty however the finishing is not that good but it still works",
+    "gold": "neutral",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "product quality",
+        "sentiment": "positive",
+        "confidence": 0.9
+      },
+      {
+        "aspect": "finishing",
+        "sentiment": "negative",
+        "confidence": 0.75
+      }
+    ]
+  },
+  {
+    "review": "bs thk hi h itne koi khaas ni#Daraz",
+    "normalized": "bs thk hi h itne koi khaas nidaraz",
+    "gold": "negative",
+    "predicted": "neutral",
+    "aspects": [
+      {
+        "aspect": "overall impression",
+        "sentiment": "neutral",
+        "confidence": 0.6
+      }
+    ]
+  },
+  {
+    "review": "Alhamdulillah received on time and fresh. Some potatoes had a bit of moisture on them.",
+    "normalized": "alhamdulillah received on time and fresh some potatoes had a bit of moisture on them",
+    "gold": "neutral",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "delivery",
+        "sentiment": "positive",
+        "confidence": 0.85
+      },
+      {
+        "aspect": "product freshness",
+        "sentiment": "neutral",
+        "confidence": 0.6
+      }
+    ]
+  },
+  {
+    "review": "Item looks sturdy enough.. But it's rather big for luggage. More appropriate for small doors or chests. Recommend seller.",
+    "normalized": "item looks sturdy enough but it's rather big for luggage more appropriate for small doors or chests recommend seller",
+    "gold": "neutral",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "item sturdiness",
+        "sentiment": "positive",
+        "confidence": 0.8
+      },
+      {
+        "aspect": "size",
+        "sentiment": "negative",
+        "confidence": 0.7
+      },
+      {
+        "aspect": "seller",
+        "sentiment": "positive",
+        "confidence": 0.8
+      }
+    ]
+  },
+  {
+    "review": "Acha ha lakin box empty tha not so hood",
+    "normalized": "acha ha lakin box empty tha not so hood",
+    "gold": "neutral",
+    "predicted": "negative",
+    "aspects": [
+      {
+        "aspect": "packaging",
+        "sentiment": "negative",
+        "confidence": 0.7
+      },
+      {
+        "aspect": "overall quality",
+        "sentiment": "neutral",
+        "confidence": 0.6
+      }
+    ]
+  },
+  {
+    "review": "well....it's quite a handy product bt seems expensive if someone used to change thrice or more in day....otherwise very good product...not used yet bt it is very convenient... delivered one time in an individual packaging....",
+    "normalized": "well it's quite a handy product bt seems expensive if someone used to change thrice or more in day otherwise very good product not used yet bt it is very convenient delivered one time in an individual packaging",
+    "gold": "neutral",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "product convenience",
+        "sentiment": "positive",
+        "confidence": 0.85
+      },
+      {
+        "aspect": "price",
+        "sentiment": "negative",
+        "confidence": 0.7
+      },
+      {
+        "aspect": "packaging",
+        "sentiment": "positive",
+        "confidence": 0.8
+      },
+      {
+        "aspect": "delivery",
+        "sentiment": "positive",
+        "confidence": 0.8
+      }
+    ]
+  },
+  {
+    "review": "packing is good delivery on Time but music colity is very low sound is not clear",
+    "normalized": "packing is good delivery on time but music colity is very low sound is not clear",
+    "gold": "neutral",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "packaging",
+        "sentiment": "positive",
+        "confidence": 0.8
+      },
+      {
+        "aspect": "delivery",
+        "sentiment": "positive",
+        "confidence": 0.8
+      },
+      {
+        "aspect": "sound quality",
+        "sentiment": "negative",
+        "confidence": 0.9
+      }
+    ]
+  },
+  {
+    "review": "such a effective diaper cream for a baby in reasonable prices",
+    "normalized": "such a effective diaper cream for a baby in reasonable prices",
+    "gold": "neutral",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "effectiveness",
+        "sentiment": "positive",
+        "confidence": 0.95
+      },
+      {
+        "aspect": "price",
+        "sentiment": "positive",
+        "confidence": 0.85
+      }
+    ]
+  },
+  {
+    "review": "picking  acha nhe ta aur aik taraf se ye shoes  ���� ESA lag Raha hy kisy ny reary se otha ke bejy ho belkul bakwas gulati Hy edar ye 300 ropi wala",
+    "normalized": "picking acha nahi ta aur aik taraf se ye shoes esa lag raha hai kisy ny reary se otha ke bejy ho belkul bakwas gulati hai edar ye 300 ropi wala",
+    "gold": "positive",
+    "predicted": "negative",
+    "aspects": [
+      {
+        "aspect": "picking",
+        "sentiment": "negative",
+        "confidence": 0.8
+      },
+      {
+        "aspect": "shoes quality",
+        "sentiment": "negative",
+        "confidence": 0.95
+      },
+      {
+        "aspect": "price",
+        "sentiment": "negative",
+        "confidence": 0.85
+      }
+    ]
+  },
+  {
+    "review": "Can not be installed on bike side view  mirrors also.",
+    "normalized": "can not be installed on bike side view mirrors also",
+    "gold": "neutral",
+    "predicted": "negative",
+    "aspects": [
+      {
+        "aspect": "installation",
+        "sentiment": "negative",
+        "confidence": 0.9
+      }
+    ]
+  },
+  {
+    "review": "very nice shoes but it use only for work and play any game",
+    "normalized": "very nice shoes but it use only for work and play any game",
+    "gold": "neutral",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "shoes quality",
+        "sentiment": "positive",
+        "confidence": 0.8
+      },
+      {
+        "aspect": "usability",
+        "sentiment": "neutral",
+        "confidence": 0.6
+      }
+    ]
+  },
+  {
+    "review": "thermostat is new but adopter is used adopter wire is damaged and used",
+    "normalized": "thermostat is new but adopter is used adopter wire is damaged and used",
+    "gold": "neutral",
+    "predicted": "negative",
+    "aspects": [
+      {
+        "aspect": "thermostat",
+        "sentiment": "positive",
+        "confidence": 0.7
+      },
+      {
+        "aspect": "adopter condition",
+        "sentiment": "negative",
+        "confidence": 0.9
+      },
+      {
+        "aspect": "adopter wire",
+        "sentiment": "negative",
+        "confidence": 0.9
+      }
+    ]
+  },
+  {
+    "review": "the quality is really good but the colour is rather grey than blue. still I'm satisfied.",
+    "normalized": "the quality is really good but the colour is rather grey than blue still i'm satisfied",
+    "gold": "neutral",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "quality",
+        "sentiment": "positive",
+        "confidence": 0.85
+      },
+      {
+        "aspect": "color",
+        "sentiment": "negative",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "review": "no doubt it is genuine Colgate Palmolive company Colgate herbal toothpaste I gave bad reviews because of its price issue when I placed the order it's price show 280 to cut 252",
+    "normalized": "no doubt it is genuine colgate palmolive company colgate herbal toothpaste i gave bad reviews because of its price issue when i placed the order it's price show 280 to cut 252",
+    "gold": "neutral",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "authenticity",
+        "sentiment": "positive",
+        "confidence": 0.9
+      },
+      {
+        "aspect": "price",
+        "sentiment": "negative",
+        "confidence": 0.85
+      }
+    ]
+  },
+  {
+    "review": "Product bilkul sahe aaya hai\r\nSirf Sound Quality average hai",
+    "normalized": "product bilkul sahe aaya hai sirf sound quality average hai",
+    "gold": "neutral",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "item as described",
+        "sentiment": "positive",
+        "confidence": 0.9
+      },
+      {
+        "aspect": "sound quality",
+        "sentiment": "neutral",
+        "confidence": 0.6
+      }
+    ]
+  },
+  {
+    "review": "it's good",
+    "normalized": "it's good",
+    "gold": "positive",
+    "predicted": "neutral",
+    "aspects": [
+      {
+        "aspect": "overall",
+        "sentiment": "neutral",
+        "confidence": 0.3
+      }
+    ]
+  },
+  {
+    "review": "Bad experience",
+    "normalized": "bad experience",
+    "gold": "negative",
+    "predicted": "neutral",
+    "aspects": [
+      {
+        "aspect": "overall",
+        "sentiment": "neutral",
+        "confidence": 0.3
+      }
+    ]
+  },
+  {
+    "review": "Heck of trouble for staff using this ��",
+    "normalized": "heck of trouble for staff using this",
+    "gold": "negative",
+    "predicted": "neutral",
+    "aspects": [
+      {
+        "aspect": "overall",
+        "sentiment": "neutral",
+        "confidence": 0.3
+      }
+    ]
+  },
+  {
+    "review": "abhi ni kia use sahi sy.. trt kia but ni ai smjh k kesy jn to f hota.. on ho bhi ra ta .. pr . double tap hi try kia . pr ni ai smjh sahi sy use ki.. rules follow bhi kiye jesy pic  m  btae gye.. .but hope sy k ye sahi chlain gy aur mjy inka use ajaye ga jld.",
+    "normalized": "abhi ni kia use sahi sy trt kia but ni ai smjh k kesy jn to f hota on ho bhi ra ta pr double tap hi try kia pr ni ai smjh sahi sy use ki rules follow bhi kiye jesy pic m btae gye but hope sy k ye sahi chlain gy aur mjy inka use ajaye ga jld",
+    "gold": "negative",
+    "predicted": "neutral",
+    "aspects": [
+      {
+        "aspect": "overall",
+        "sentiment": "neutral",
+        "confidence": 0.3
+      }
+    ]
+  },
+  {
+    "review": "quality is good but it takes so much time for delivery.i ordered on 25 dec and got it on 13 jan",
+    "normalized": "quality is good but it takes so much time for delivery i ordered on 25 dec and got it on 13 jan",
+    "gold": "neutral",
+    "predicted": "negative",
+    "aspects": [
+      {
+        "aspect": "quality",
+        "sentiment": "positive",
+        "confidence": 0.8
+      },
+      {
+        "aspect": "delivery",
+        "sentiment": "negative",
+        "confidence": 0.9
+      }
+    ]
+  },
+  {
+    "review": "same as pic and fast delivery nice product thanks to daraz and cheap price in best product some tym slow working",
+    "normalized": "same as pic and fast delivery nice product thanks to daraz and cheap price in best product some tym slow working",
+    "gold": "neutral",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "item as described",
+        "sentiment": "positive",
+        "confidence": 0.9
+      },
+      {
+        "aspect": "delivery",
+        "sentiment": "positive",
+        "confidence": 0.9
+      },
+      {
+        "aspect": "price",
+        "sentiment": "positive",
+        "confidence": 0.85
+      },
+      {
+        "aspect": "performance",
+        "sentiment": "neutral",
+        "confidence": 0.6
+      }
+    ]
+  },
+  {
+    "review": "Fabric Quality is not good and lastic quality is loose. but in this price its ok",
+    "normalized": "fabric quality is not good and lastic quality is loose but in this price its ok",
+    "gold": "neutral",
+    "predicted": "negative",
+    "aspects": [
+      {
+        "aspect": "fabric quality",
+        "sentiment": "negative",
+        "confidence": 0.85
+      },
+      {
+        "aspect": "elastic quality",
+        "sentiment": "negative",
+        "confidence": 0.8
+      },
+      {
+        "aspect": "price",
+        "sentiment": "neutral",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "review": "Nice But remote don,t work proper from long distance",
+    "normalized": "nice but remote don t work proper from long distance",
+    "gold": "neutral",
+    "predicted": "negative",
+    "aspects": [
+      {
+        "aspect": "remote performance",
+        "sentiment": "negative",
+        "confidence": 0.8
+      }
+    ]
+  },
+  {
+    "review": "Serves the purpose. Smell not good",
+    "normalized": "serves the purpose smell not good",
+    "gold": "neutral",
+    "predicted": "negative",
+    "aspects": [
+      {
+        "aspect": "purpose",
+        "sentiment": "positive",
+        "confidence": 0.7
+      },
+      {
+        "aspect": "smell",
+        "sentiment": "negative",
+        "confidence": 0.8
+      }
+    ]
+  },
+  {
+    "review": "one of it's piece i broken from edge, price is double as compare to the quality,",
+    "normalized": "one of it's piece i broken from edge price is double as compare to the quality",
+    "gold": "neutral",
+    "predicted": "negative",
+    "aspects": [
+      {
+        "aspect": "product damage",
+        "sentiment": "negative",
+        "confidence": 0.95
+      },
+      {
+        "aspect": "price",
+        "sentiment": "negative",
+        "confidence": 0.9
+      }
+    ]
+  },
+  {
+    "review": "After receive my parcel ������������\r\nThis product is so g00d \r\nAnd am s0o",
+    "normalized": "after receive my parcel this product is so g00d and am s0o",
+    "gold": "neutral",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "product quality",
+        "sentiment": "positive",
+        "confidence": 0.9
+      },
+      {
+        "aspect": "overall satisfaction",
+        "sentiment": "positive",
+        "confidence": 0.9
+      }
+    ]
+  },
+  {
+    "review": "the quality is very  nice  ������ and it's very nice  but the material is a little bit warm otherwise the quality print everyt",
+    "normalized": "the quality is very nice and it's very nice but the material is a little bit warm otherwise the quality print everyt",
+    "gold": "neutral",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "quality",
+        "sentiment": "positive",
+        "confidence": 0.85
+      },
+      {
+        "aspect": "material",
+        "sentiment": "negative",
+        "confidence": 0.75
+      }
+    ]
+  },
+  {
+    "review": "Difficult to take them out.. Can cause Hair break, but they are as shown in picture.",
+    "normalized": "difficult to take them out can cause hair break but they are as shown in picture",
+    "gold": "neutral",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "usability",
+        "sentiment": "negative",
+        "confidence": 0.8
+      },
+      {
+        "aspect": "item as described",
+        "sentiment": "positive",
+        "confidence": 0.85
+      }
+    ]
+  },
+  {
+    "review": "Watch is really nice, it���s original as per my research however I will recommend seller to improve the box. Overall the experience is reall",
+    "normalized": "watch is really nice it s original as per my research however i will recommend seller to improve the box overall the experience is reall",
+    "gold": "neutral",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "watch quality",
+        "sentiment": "positive",
+        "confidence": 0.85
+      },
+      {
+        "aspect": "authenticity",
+        "sentiment": "positive",
+        "confidence": 0.8
+      },
+      {
+        "aspect": "packaging",
+        "sentiment": "negative",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "review": "Thank u.recommend seller ���best pr",
+    "normalized": "thank u recommend seller best pr",
+    "gold": "negative",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "seller service",
+        "sentiment": "positive",
+        "confidence": 0.9
+      },
+      {
+        "aspect": "product recommendation",
+        "sentiment": "positive",
+        "confidence": 0.8
+      }
+    ]
+  },
+  {
+    "review": "best machine massager for patients nice Mashallah but colour was not good I want blue colour red colour black colour plz kindly read my comment I want another colour",
+    "normalized": "best machine massager for patients nice mashallah but colour was not good i want blue colour red colour black colour plz kindly read my comment i want another colour",
+    "gold": "neutral",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "product functionality",
+        "sentiment": "positive",
+        "confidence": 0.85
+      },
+      {
+        "aspect": "color option",
+        "sentiment": "negative",
+        "confidence": 0.8
+      }
+    ]
+  },
+  {
+    "review": "bottle overall good but only working with water not oil",
+    "normalized": "bottle overall good but only working with water not oil",
+    "gold": "neutral",
+    "predicted": "negative",
+    "aspects": [
+      {
+        "aspect": "bottle functionality",
+        "sentiment": "neutral",
+        "confidence": 0.6
+      },
+      {
+        "aspect": "compatibility",
+        "sentiment": "negative",
+        "confidence": 0.75
+      }
+    ]
+  },
+  {
+    "review": "Nice design\r\nYe shose boht ala h or ye running shose halki or mazbut hai l. Abi kharedain or enjoye kary",
+    "normalized": "nice design ye shose boht ala h or ye running shose halki or mazbut hai l abi kharedain or enjoye kary",
+    "gold": "negative",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "design",
+        "sentiment": "positive",
+        "confidence": 0.9
+      },
+      {
+        "aspect": "shoe quality",
+        "sentiment": "positive",
+        "confidence": 0.85
+      },
+      {
+        "aspect": "durability",
+        "sentiment": "positive",
+        "confidence": 0.8
+      }
+    ]
+  },
+  {
+    "review": "Its worth it for the price, but very fragile and hence can be damaged easily. There was no guide on how to apply the strip and the glue which would help in sticking the strip was not of a good quality. But overall will give it a solid 7/10.",
+    "normalized": "its worth it for the price but very fragile and hence can be damaged easily there was no guide on how to apply the strip and the glue which would help in sticking the strip was not of a good quality but overall will give it a solid 7 10",
+    "gold": "neutral",
+    "predicted": "negative",
+    "aspects": [
+      {
+        "aspect": "price",
+        "sentiment": "positive",
+        "confidence": 0.8
+      },
+      {
+        "aspect": "fragility",
+        "sentiment": "negative",
+        "confidence": 0.85
+      },
+      {
+        "aspect": "instruction guide",
+        "sentiment": "negative",
+        "confidence": 0.75
+      },
+      {
+        "aspect": "glue quality",
+        "sentiment": "negative",
+        "confidence": 0.85
+      }
+    ]
+  },
+  {
+    "review": "I have tried expensive to cheap as hell headphones. I have even tried BEATS headphones but these pair of headphones beat em all being in a budget. They last longer than your husband.",
+    "normalized": "i have tried expensive to cheap as hell headphones i have even tried beats headphones but these pair of headphones beat em all being in a budget they last longer than your husband",
+    "gold": "negative",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "headphone performance",
+        "sentiment": "positive",
+        "confidence": 0.95
+      },
+      {
+        "aspect": "price",
+        "sentiment": "positive",
+        "confidence": 0.9
+      },
+      {
+        "aspect": "durability",
+        "sentiment": "positive",
+        "confidence": 0.85
+      }
+    ]
+  },
+  {
+    "review": "it's good but loose for my hair dryer",
+    "normalized": "it's good but loose for my hair dryer",
+    "gold": "neutral",
+    "predicted": "negative",
+    "aspects": [
+      {
+        "aspect": "fit",
+        "sentiment": "negative",
+        "confidence": 0.8
+      }
+    ]
+  },
+  {
+    "review": "received the same product as I ordered and i hope it will be glowing the same way cuz I tested it and it works. specially friend ki bday k lia manway hai hopefully it will be good",
+    "normalized": "received the same product as i ordered and i hope it will be glowing the same way cuz i tested it and it works specially friend ki bday k lia manway hai hopefully it will be good",
+    "gold": "neutral",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "item as described",
+        "sentiment": "positive",
+        "confidence": 0.9
+      },
+      {
+        "aspect": "functionality",
+        "sentiment": "neutral",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "review": "good sound quality battery time kuch kum hy but is price myn theek hy.. delivery on time...",
+    "normalized": "good sound quality battery time kuch kum hai but is price myn theek hai delivery on time",
+    "gold": "neutral",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "sound quality",
+        "sentiment": "positive",
+        "confidence": 0.9
+      },
+      {
+        "aspect": "battery timing",
+        "sentiment": "negative",
+        "confidence": 0.7
+      },
+      {
+        "aspect": "price",
+        "sentiment": "positive",
+        "confidence": 0.8
+      },
+      {
+        "aspect": "delivery",
+        "sentiment": "positive",
+        "confidence": 0.9
+      }
+    ]
+  },
+  {
+    "review": "Packing was looking little old but product was fine.",
+    "normalized": "packing was looking little old but product was fine",
+    "gold": "neutral",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "packaging",
+        "sentiment": "negative",
+        "confidence": 0.7
+      },
+      {
+        "aspect": "product",
+        "sentiment": "positive",
+        "confidence": 0.8
+      }
+    ]
+  },
+  {
+    "review": "It's China product, not very good quality, I recommend to all, use other imported products available at Surgical market, Saddar, Karachi. Thanks",
+    "normalized": "it's china product not very good quality i recommend to all use other imported products available at surgical market saddar karachi thanks",
+    "gold": "neutral",
+    "predicted": "negative",
+    "aspects": [
+      {
+        "aspect": "origin",
+        "sentiment": "negative",
+        "confidence": 0.8
+      },
+      {
+        "aspect": "quality",
+        "sentiment": "negative",
+        "confidence": 0.85
+      },
+      {
+        "aspect": "recommendation",
+        "sentiment": "negative",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "review": "Nice product. couldn't take light pictures otherwise would've posted it.",
+    "normalized": "nice product couldn't take light pictures otherwise would've posted it",
+    "gold": "neutral",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "product",
+        "sentiment": "positive",
+        "confidence": 0.8
+      }
+    ]
+  },
+  {
+    "review": "less price quality is Good but it was normal",
+    "normalized": "less price quality is good but it was normal",
+    "gold": "neutral",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "price",
+        "sentiment": "positive",
+        "confidence": 0.8
+      },
+      {
+        "aspect": "quality",
+        "sentiment": "positive",
+        "confidence": 0.7
+      },
+      {
+        "aspect": "overall performance",
+        "sentiment": "neutral",
+        "confidence": 0.6
+      }
+    ]
+  },
+  {
+    "review": "2 star",
+    "normalized": "2 star",
+    "gold": "negative",
+    "predicted": "neutral",
+    "aspects": [
+      {
+        "aspect": "overall",
+        "sentiment": "neutral",
+        "confidence": 0.3
+      }
+    ]
+  },
+  {
+    "review": "fresh product but big size",
+    "normalized": "fresh product but big size",
+    "gold": "neutral",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "product freshness",
+        "sentiment": "positive",
+        "confidence": 0.9
+      },
+      {
+        "aspect": "size",
+        "sentiment": "neutral",
+        "confidence": 0.6
+      }
+    ]
+  },
+  {
+    "review": "My Previous experience with other seller was very bad but this time it's Excellent Product working properly and received in awesome condition delivered on time. Experience with this Seller is very good, prompt response and send the product as I requested.",
+    "normalized": "my previous experience with other seller was very bad but this time it's excellent product working properly and received in awesome condition delivered on time experience with this seller is very good prompt response and send the product as i requested",
+    "gold": "neutral",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "product quality",
+        "sentiment": "positive",
+        "confidence": 0.95
+      },
+      {
+        "aspect": "product condition",
+        "sentiment": "positive",
+        "confidence": 0.9
+      },
+      {
+        "aspect": "delivery",
+        "sentiment": "positive",
+        "confidence": 0.9
+      },
+      {
+        "aspect": "seller service",
+        "sentiment": "positive",
+        "confidence": 0.95
+      },
+      {
+        "aspect": "response time",
+        "sentiment": "positive",
+        "confidence": 0.9
+      }
+    ]
+  },
+  {
+    "review": "good quality  , but charging time bht km hai  outdoor k liyeet nhi hain,",
+    "normalized": "good quality but charging time bohat km hai outdoor k liyeet nahi hai",
+    "gold": "neutral",
+    "predicted": "negative",
+    "aspects": [
+      {
+        "aspect": "quality",
+        "sentiment": "positive",
+        "confidence": 0.8
+      },
+      {
+        "aspect": "charging time",
+        "sentiment": "negative",
+        "confidence": 0.9
+      },
+      {
+        "aspect": "outdoor usability",
+        "sentiment": "negative",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "review": "Made of good quality stuff, looks beautifull but Little bit expensive",
+    "normalized": "made of good quality stuff looks beautifull but little bit expensive",
+    "gold": "neutral",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "material quality",
+        "sentiment": "positive",
+        "confidence": 0.9
+      },
+      {
+        "aspect": "appearance",
+        "sentiment": "positive",
+        "confidence": 0.85
+      },
+      {
+        "aspect": "price",
+        "sentiment": "negative",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "review": "The hot air stopped coming out of the dryer even though the button was fine. Overall it's good",
+    "normalized": "the hot air stopped coming out of the dryer even though the button was fine overall it's good",
+    "gold": "neutral",
+    "predicted": "negative",
+    "aspects": [
+      {
+        "aspect": "dryer function",
+        "sentiment": "negative",
+        "confidence": 0.9
+      },
+      {
+        "aspect": "overall quality",
+        "sentiment": "positive",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "review": "package is good but SD card is not available in the package SD card is missing",
+    "normalized": "package is good but sd card is not available in the package sd card is missing",
+    "gold": "neutral",
+    "predicted": "negative",
+    "aspects": [
+      {
+        "aspect": "package",
+        "sentiment": "positive",
+        "confidence": 0.8
+      },
+      {
+        "aspect": "sd card availability",
+        "sentiment": "negative",
+        "confidence": 0.95
+      }
+    ]
+  },
+  {
+    "review": "At first, it thought it's a pretty good purchase as the sound quality was good and it was delivered on time . However after using for just one month, one of the airpods stopped working and few weeks later the same happened with the other. \r\nSo you can buy this only if you have the money for buying another pair after a month.",
+    "normalized": "at first it thought it's a pretty good purchase as the sound quality was good and it was delivered on time however after using for just one month one of the airpods stopped working and few weeks later the same happened with the other so you can buy this only if you have the money for buying another pair after a month",
+    "gold": "neutral",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "sound quality",
+        "sentiment": "positive",
+        "confidence": 0.85
+      },
+      {
+        "aspect": "delivery",
+        "sentiment": "positive",
+        "confidence": 0.8
+      },
+      {
+        "aspect": "durability",
+        "sentiment": "negative",
+        "confidence": 0.95
+      }
+    ]
+  },
+  {
+    "review": "All the items, I ordered have been sent in the same way.",
+    "normalized": "all the items i ordered have been sent in the same way",
+    "gold": "positive",
+    "predicted": "neutral",
+    "aspects": [
+      {
+        "aspect": "item delivery",
+        "sentiment": "neutral",
+        "confidence": 0.6
+      }
+    ]
+  },
+  {
+    "review": "Everything is good\r\nBut Betry timing is low",
+    "normalized": "everything is good but betry timing is low",
+    "gold": "neutral",
+    "predicted": "negative",
+    "aspects": [
+      {
+        "aspect": "battery timing",
+        "sentiment": "negative",
+        "confidence": 0.8
+      }
+    ]
+  },
+  {
+    "review": "packaging and quality is good but the black wire connections are loose . they should be upgraded",
+    "normalized": "packaging and quality is good but the black wire connections are loose they should be upgraded",
+    "gold": "neutral",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "packaging",
+        "sentiment": "positive",
+        "confidence": 0.8
+      },
+      {
+        "aspect": "quality",
+        "sentiment": "positive",
+        "confidence": 0.7
+      },
+      {
+        "aspect": "wire connections",
+        "sentiment": "negative",
+        "confidence": 0.8
+      }
+    ]
+  },
+  {
+    "review": "packing was not so good but the clock is good all the numbers are perfectly delivered and it is the best for decoration as well ����",
+    "normalized": "packing was not so good but the clock is good all the numbers are perfectly delivered and it is the best for decoration as well",
+    "gold": "neutral",
+    "predicted": "positive",
+    "aspects": [
+      {
+        "aspect": "packing",
+        "sentiment": "negative",
+        "confidence": 0.7
+      },
+      {
+        "aspect": "clock quality",
+        "sentiment": "positive",
+        "confidence": 0.85
+      },
+      {
+        "aspect": "decoration",
+        "sentiment": "positive",
+        "confidence": 0.8
+      }
+    ]
+  },
+  {
+    "review": "it is a good product lkin ya bht jldi discharged ho jata ha or bht late sa charging krta ha but it is very good product",
+    "normalized": "it is a good product lkin ya bohat jldi discharged ho jata ha or bohat late sa charging krta ha but it is very good product",
+    "gold": "neutral",
+    "predicted": "negative",
+    "aspects": [
+      {
+        "aspect": "product quality",
+        "sentiment": "positive",
+        "confidence": 0.8
+      },
+      {
+        "aspect": "battery life",
+        "sentiment": "negative",
+        "confidence": 0.9
+      },
+      {
+        "aspect": "charging speed",
+        "sentiment": "negative",
+        "confidence": 0.9
+      }
+    ]
+  },
+  {
+    "review": "quality is not bad but size is too much small only a handfree you can carry",
+    "normalized": "quality is not bad but size is too much small only a handfree you can carry",
+    "gold": "neutral",
+    "predicted": "negative",
+    "aspects": [
+      {
+        "aspect": "quality",
+        "sentiment": "neutral",
+        "confidence": 0.6
+      },
+      {
+        "aspect": "size",
+        "sentiment": "negative",
+        "confidence": 0.8
+      }
+    ]
+  },
+  {
+    "review": "Shoes quality is satisfactory/Good in this price range but the seller sent the wrong shoe size even after multiple reminders in the personal chat. \r\n\r\nFiled for return already. I am hoping to get a refund soon so I can reorder or choose other shoes from this store. Thanks",
+    "normalized": "shoes quality is satisfactory good in this price range but the seller sent the wrong shoe size even after multiple reminders in the personal chat filed for return already i am hoping to get a refund soon so i can reorder or choose other shoes from this store thanks",
+    "gold": "neutral",
+    "predicted": "negative",
+    "aspects": [
+      {
+        "aspect": "shoes quality",
+        "sentiment": "positive",
+        "confidence": 0.75
+      },
+      {
+        "aspect": "seller service",
+        "sentiment": "negative",
+        "confidence": 0.85
+      },
+      {
+        "aspect": "size accuracy",
+        "sentiment": "negative",
+        "confidence": 0.9
+      }
+    ]
+  }
+]
