@@ -4,6 +4,9 @@
 
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: #1f2937;
 }
 
 /* smooth fade-in for results */
@@ -13,4 +16,21 @@ body {
 }
 .animate-fade-up {
   animation: fadeUp 0.4s ease-out both;
+}
+
+/* toast slide-in from top-right */
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(-12px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.animate-toast {
+  animation: toastIn 0.3s ease-out both;
+}
+
+/* line-clamp utility for reply preview */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
