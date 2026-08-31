@@ -14,10 +14,11 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 from dotenv import load_dotenv
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from pydantic import BaseModel, Field
 
-from database import init_db
+from database import init_db, get_db, Review, AspectSentiment, Action
+from sqlalchemy.orm import Session
 from preprocessing.normalizer import normalize
 from routers.upload import router as upload_router
 from services.absa_engine import MAX_BATCH, analyze_reviews
@@ -103,3 +104,46 @@ def analyze(request: ABSARequest) -> list[dict]:
                 })
         return results
     return analyze_reviews(request.reviews)
+
+
+# --- dashboard data endpoint ---------------------------------------------
+
+@app.get("/api/reviews")
+def list_reviews(
+    limit: int = 100,
+    db: Session = Depends(get_db),
+) -> list[dict]:
+    """Return recent processed reviews with aspects and actions for the
+    dashboard."""
+    from sqlalchemy import desc
+    reviews = (
+        db.query(Review)
+        .order_by(desc(Review.created_at))
+        .limit(limit)
+        .all()
+    )
+    result = []
+    for r in reviews:
+        aspects = [
+            {
+                "aspect": a.aspect,
+                "sentiment": a.sentiment,
+                "confidence": a.confidence,
+            }
+            for a in r.aspect_sentiments
+        ]
+        actions = [
+            {
+                "action_type": a.action_type,
+                "action_text": a.action_text,
+            }
+            for a in r.actions
+        ]
+        result.append({
+            "id": r.id,
+            "raw_text": r.raw_text,
+            "normalized_text": r.normalized_text,
+            "aspects": aspects,
+            "actions": actions,
+        })
+    return result
