@@ -1,0 +1,150 @@
+# Raaye — AI-Powered Feedback-to-Action Engine for Pakistani SMEs
+
+> Turn thousands of Roman Urdu reviews into actionable insights — not just sentiment scores, but automated recovery.
+
+---
+
+## The Problem
+
+A mid-size Daraz seller wakes up to 300 new reviews. Half are in Roman Urdu ("*bohat achi quality but delivery late thi*"), mixed with English, emoji, and abbreviations that no off-the-shelf tool can parse. Recurring complaints — late deliveries, wrong sizes, damaged packaging — go unnoticed for weeks until ratings silently drop and sales follow. Existing sentiment analysis tools are built for English, return a single thumbs-up or thumbs-down per review, and give sellers zero actionable next steps. For a seller managing thousands of reviews across dozens of SKUs, this isn't an analytics gap — it's a revenue leak.
+
+## The Solution
+
+**Raaye** reads code-mixed Roman Urdu + English reviews natively. Using Alibaba Cloud's **Qwen** model through Model Studio, it breaks every review into individual aspects — delivery, price, quality, packaging, seller service — and assigns sentiment to each one. A review like "*sound quality zabardast but price zaida hai*" correctly produces `sound → positive`, `price → negative`, instead of a single misleading score.
+
+But detection is only half the job. Raaye closes the loop: for every negative aspect detected above a confidence threshold, it **auto-generates a recovery reply** in the same Roman Urdu + English mix the customer wrote in. It also synthesizes an **executive summary** across entire review batches — top complaint, sentiment split, most urgent flagged review — so a seller can go from raw CSV to action plan in one upload.
+
+## Architecture
+
+```
+┌─────────────┐
+│  CSV Upload  │  Seller uploads Daraz review export
+│  (FastAPI)   │
+└──────┬──────┘
+       │
+       ▼
+┌──────────────────────────────────────────────────────────┐
+│                    PREPROCESSING                          │
+│  normalizer.py                                           │
+│  lowercase → strip noise/emoji → collapse repeats →      │
+│  canonicalize Roman Urdu spelling variants               │
+└──────────────────────┬───────────────────────────────────┘
+                       │
+                       ▼
+┌──────────────────────────────────────────────────────────┐
+│              AI ENGINE — Qwen (Alibaba Cloud)             │
+│  services/absa_engine.py                                  │
+│                                                          │
+│  ┌─────────────────────────────────────────────────┐     │
+│  │  Few-shot prompt (code-mixed examples)           │     │
+│  │  → Batched LLM call (≤10 reviews / request)     │     │
+│  │  → Aspect extraction + per-aspect sentiment      │     │
+│  │  → Retry (2 attempts) + rule-based fallback      │     │
+│  └─────────────────────────────────────────────────┘     │
+│  Model: qwen-plus via DashScope OpenAI-compatible API    │
+└──────────────────────┬───────────────────────────────────┘
+                       │
+                       ▼
+┌──────────────────────────────────────────────────────────┐
+│              ACTION ENGINE                                │
+│  services/action_engine.py                                │
+│                                                          │
+│  • Auto-reply drafts for negative aspects (Qwen +        │
+│    template fallback)                                     │
+│  • Executive summary per batch (top complaint,            │
+│    sentiment split, most urgent review)                   │
+└──────────────────────┬───────────────────────────────────┘
+                       │
+                       ▼
+┌──────────────┐   ┌────────────────┐
+│   SQLite /   │   │   Dashboard    │
+│  SQLAlchemy  │◄──│   (Frontend)   │
+│  raaye.db    │   │   React +      │
+└──────────────┘   │   Tailwind CSS │
+                   └────────────────┘
+```
+
+## Key Results
+
+Evaluated on a balanced test set of **300 Daraz reviews** (100 per class) from `daraz_reviews_cleaned.csv`, run through the full pipeline with Qwen inference:
+
+| Class | Precision | Recall | F1 | Support |
+|-------|-----------|--------|------|---------|
+| Positive | 0.758 | 0.940 | **0.839** | 100 |
+| Negative | 0.767 | 0.890 | **0.824** | 100 |
+| Neutral | 0.783 | 0.470 | **0.587** | 100 |
+
+**Overall accuracy: 76.7%** — up from a 64% baseline.
+
+### Technical highlight: the tie-breaking bug
+
+During evaluation, we discovered that the prompt improvements correctly produced balanced mixed-sentiment aspects for neutral reviews (e.g., 1 positive + 1 negative), but the `overall_sentiment()` aggregation function broke ties by confidence — reliably picking a polarity winner instead of returning "neutral". A two-line fix (`if positive and negative are tied → return neutral`) jumped accuracy from 68% to 76.7% and neutral F1 from 0.250 to 0.587. This was a case where improving the model output exposed a downstream aggregation bug — the fix was in the evaluation layer, not the prompt.
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| **Backend API** | FastAPI + Uvicorn |
+| **AI / LLM** | Qwen (Alibaba Cloud Model Studio) via OpenAI-compatible API |
+| **Database** | SQLite + SQLAlchemy ORM |
+| **Frontend** | React + Tailwind CSS |
+| **Language** | Python 3.11+ |
+
+## How to Run
+
+### 1. Clone and install
+
+```bash
+git clone https://github.com/codebyzahra/Raaye_Alibaba_Hackathon2026.git
+cd Raaye_Alibaba_Hackathon2026
+pip install -r requirements.txt
+```
+
+### 2. Configure environment
+
+Create a `.env` file in the project root:
+
+```env
+DASHSCOPE_API_KEY=sk-your-key-here
+QWEN_MODEL=qwen-plus-2025-07-28
+DASHSCOPE_BASE_URL=https://dashscope-intl.aliyuncs.com/compatible-mode/v1
+DEMO_MODE=false
+```
+
+Get your API key from [Alibaba Cloud Model Studio](https://www.alibabacloud.com/product/model-studio). Without it, the service degrades gracefully to a rule-based keyword fallback.
+
+### 3. Start the backend
+
+```bash
+uvicorn main:app --reload
+```
+
+The API is live at `http://localhost:8000`. Endpoints:
+
+- `POST /analyze` — send up to 10 reviews, get per-aspect sentiment back
+- `POST /api/upload` — upload a CSV of reviews for full pipeline processing
+
+### 4. Demo mode (no API key required)
+
+Set `DEMO_MODE=true` in `.env` to serve 18 pre-cached reviews instantly — useful for demos and judging without consuming API quota:
+
+```bash
+# Regenerate the cache with live Qwen results (optional):
+python evaluation/generate_demo_cache.py
+```
+
+### 5. Run the benchmark
+
+```bash
+python evaluation/run_benchmark.py --per-class 100
+```
+
+This samples 100 reviews per class, runs them through the full pipeline, and saves misclassified examples to `misclassified_examples.json`.
+
+## Roadmap
+
+- **Daraz Seller Center API** — pull reviews directly instead of CSV upload
+- **WhatsApp Business API** — send auto-reply drafts to sellers for one-tap approval
+- **Alibaba Cloud Function Compute** — serverless deployment for pay-per-review scaling
+- **Multilingual expansion** — Sindhi, Pashto, and Bengali review support
+- **Trend detection** — track aspect sentiment over time to surface emerging issues before ratings drop
