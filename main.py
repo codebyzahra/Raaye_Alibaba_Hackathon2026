@@ -2,20 +2,59 @@
 
 Run locally:
     uvicorn main:app --reload
+
+Demo mode (instant, no API calls):
+    Set DEMO_MODE=true in .env, then only pre-cached reviews are served.
 """
 
+import json
 import logging
+import os
 from contextlib import asynccontextmanager
+from pathlib import Path
 
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
 
 from database import init_db
+from preprocessing.normalizer import normalize
 from routers.upload import router as upload_router
 from services.absa_engine import MAX_BATCH, analyze_reviews
 
+load_dotenv()
 logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
+# --- demo mode (cached results, zero API calls) --------------------------
+
+DEMO_MODE = os.getenv("DEMO_MODE", "false").strip().lower() in ("true", "1", "yes")
+_DEMO_CACHE: dict[str, dict] = {}
+
+if DEMO_MODE:
+    _cache_path = Path(__file__).parent / "data" / "cached_demo_results.json"
+    try:
+        with open(_cache_path, encoding="utf-8") as _f:
+            _data = json.load(_f)
+        _DEMO_CACHE = {
+            entry["normalized"]: entry["absa"]
+            for entry in _data["demo_reviews"]
+        }
+        logger.info(
+            "DEMO_MODE enabled — loaded %d cached reviews from %s",
+            len(_DEMO_CACHE), _cache_path.name,
+        )
+    except FileNotFoundError:
+        logger.error(
+            "DEMO_MODE=true but %s not found. "
+            "Run: python evaluation/generate_demo_cache.py",
+            _cache_path,
+        )
+    except Exception as exc:
+        logger.error("Failed to load demo cache: %s", exc)
+
+
+# --- app setup -----------------------------------------------------------
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -47,4 +86,20 @@ class ABSARequest(BaseModel):
 def analyze(request: ABSARequest) -> list[dict]:
     """One ``{"aspects": [{"aspect", "sentiment", "confidence"}]}`` object per
     review, as a JSON array in the same order as the input."""
+    if DEMO_MODE:
+        results = []
+        for review in request.reviews:
+            norm = normalize(review)
+            cached = _DEMO_CACHE.get(norm)
+            if cached:
+                results.append(cached)
+            else:
+                results.append({
+                    "aspects": [
+                        {"aspect": "overall", "sentiment": "neutral",
+                         "confidence": 0.5,
+                         "note": "review not in demo cache"},
+                    ]
+                })
+        return results
     return analyze_reviews(request.reviews)

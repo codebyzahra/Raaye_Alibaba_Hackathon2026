@@ -1,0 +1,695 @@
+{
+  "demo_reviews": [
+    {
+      "review": "Bohat hi kamal kay Airbird hain sound or bass bohat hi kamal ka hai battery timing bohat achi hai",
+      "normalized": "bohat hi kamal kay airbird hai sound or bass bohat hi kamal ka hai battery timing bohat achi hai",
+      "absa": {
+        "aspects": [
+          {
+            "aspect": "sound quality",
+            "sentiment": "positive",
+            "confidence": 0.95
+          },
+          {
+            "aspect": "battery timing",
+            "sentiment": "positive",
+            "confidence": 0.9
+          }
+        ]
+      },
+      "actions": [
+        {
+          "aspect": "sound quality",
+          "sentiment": "positive",
+          "confidence": 0.95,
+          "auto_reply": ""
+        },
+        {
+          "aspect": "battery timing",
+          "sentiment": "positive",
+          "confidence": 0.9,
+          "auto_reply": ""
+        }
+      ]
+    },
+    {
+      "review": "Excellent product, amazing quality and fast delivery. Highly recommended!",
+      "normalized": "excellent product amazing quality and fast delivery highly recommended",
+      "absa": {
+        "aspects": [
+          {
+            "aspect": "product quality",
+            "sentiment": "positive",
+            "confidence": 0.95
+          },
+          {
+            "aspect": "delivery",
+            "sentiment": "positive",
+            "confidence": 0.9
+          }
+        ]
+      },
+      "actions": [
+        {
+          "aspect": "product quality",
+          "sentiment": "positive",
+          "confidence": 0.95,
+          "auto_reply": ""
+        },
+        {
+          "aspect": "delivery",
+          "sentiment": "positive",
+          "confidence": 0.9,
+          "auto_reply": ""
+        }
+      ]
+    },
+    {
+      "review": "MashAllah bohat achi chiz hai jo mangwaya tha wohi aya hai bilkul orignal",
+      "normalized": "mashallah bohat achi chiz hai jo mangwaya tha wohi aya hai bilkul original",
+      "absa": {
+        "aspects": [
+          {
+            "aspect": "item as described",
+            "sentiment": "positive",
+            "confidence": 0.9
+          },
+          {
+            "aspect": "authenticity",
+            "sentiment": "positive",
+            "confidence": 0.9
+          }
+        ]
+      },
+      "actions": [
+        {
+          "aspect": "item as described",
+          "sentiment": "positive",
+          "confidence": 0.9,
+          "auto_reply": ""
+        },
+        {
+          "aspect": "authenticity",
+          "sentiment": "positive",
+          "confidence": 0.9,
+          "auto_reply": ""
+        }
+      ]
+    },
+    {
+      "review": "Best purchase this year. Works perfectly, looks great, and the price is fair.",
+      "normalized": "best purchase this year works perfectly looks great and the price is fair",
+      "absa": {
+        "aspects": [
+          {
+            "aspect": "product quality",
+            "sentiment": "positive",
+            "confidence": 0.95
+          },
+          {
+            "aspect": "appearance",
+            "sentiment": "positive",
+            "confidence": 0.85
+          },
+          {
+            "aspect": "price",
+            "sentiment": "positive",
+            "confidence": 0.8
+          }
+        ]
+      },
+      "actions": [
+        {
+          "aspect": "product quality",
+          "sentiment": "positive",
+          "confidence": 0.95,
+          "auto_reply": ""
+        },
+        {
+          "aspect": "appearance",
+          "sentiment": "positive",
+          "confidence": 0.85,
+          "auto_reply": ""
+        },
+        {
+          "aspect": "price",
+          "sentiment": "positive",
+          "confidence": 0.8,
+          "auto_reply": ""
+        }
+      ]
+    },
+    {
+      "review": "Product ki Finishing bilkul Achi nahi hai Glue clear visible hai jesa photo me dekhaya hai wesa bilkul nahi hai",
+      "normalized": "product ki finishing bilkul achi nahi hai glue clear visible hai jesa photo me dekhaya hai wesa bilkul nahi hai",
+      "absa": {
+        "aspects": [
+          {
+            "aspect": "finishing",
+            "sentiment": "negative",
+            "confidence": 0.95
+          },
+          {
+            "aspect": "item as described",
+            "sentiment": "negative",
+            "confidence": 0.9
+          }
+        ]
+      },
+      "actions": [
+        {
+          "aspect": "finishing",
+          "sentiment": "negative",
+          "confidence": 0.95,
+          "auto_reply": "We’re really sorry about the finishing issue – we understand your concern and regret that the product didn’t meet your expectations. We’ll definitely share your feedback with the supplier to improve quality."
+        },
+        {
+          "aspect": "item as described",
+          "sentiment": "negative",
+          "confidence": 0.9,
+          "auto_reply": "We’re really sorry about the finishing issue – apke experience acha nahi raha humein bahut afsos hai. We’ll definitely share your feedback with the seller to improve product quality."
+        }
+      ]
+    },
+    {
+      "review": "Terrible quality, broke after 2 days. Complete waste of money.",
+      "normalized": "terrible quality broke after 2 days complete waste of money",
+      "absa": {
+        "aspects": [
+          {
+            "aspect": "quality",
+            "sentiment": "negative",
+            "confidence": 0.95
+          },
+          {
+            "aspect": "durability",
+            "sentiment": "negative",
+            "confidence": 0.9
+          }
+        ]
+      },
+      "actions": [
+        {
+          "aspect": "quality",
+          "sentiment": "negative",
+          "confidence": 0.95,
+          "auto_reply": "So sorry ke aap ko issue ka samna karna para, yaqeen jayein hum is ki quality ko le kar bohot zyada serious hain. Apki feedback hume behtar banana mein madad karegi — please contact us at support@daraz.pk for replacement or refund."
+        },
+        {
+          "aspect": "durability",
+          "sentiment": "negative",
+          "confidence": 0.9,
+          "auto_reply": "So sorry ke aapko issue ka samna karna para, humein aapki feedback per dard hota hai. Aap ka item jald se jald replace kar diya jaye ga — please DM karein taake process shuroo kar saken."
+        }
+      ]
+    },
+    {
+      "review": "Jo pic hai waise cheez nahi hai ye bht mehangi hai remote bhi achi quality ka nahi hai",
+      "normalized": "jo pic hai waise cheez nahi hai ye bohat mehangi hai remote bhi achi quality ka nahi hai",
+      "absa": {
+        "aspects": [
+          {
+            "aspect": "item as described",
+            "sentiment": "negative",
+            "confidence": 0.95
+          },
+          {
+            "aspect": "price",
+            "sentiment": "negative",
+            "confidence": 0.85
+          },
+          {
+            "aspect": "remote quality",
+            "sentiment": "negative",
+            "confidence": 0.85
+          }
+        ]
+      },
+      "actions": [
+        {
+          "aspect": "item as described",
+          "sentiment": "negative",
+          "confidence": 0.95,
+          "auto_reply": "Humara dil se afsos hai ke aapko item pasand nahi aaya — hum samajhtay hain ke expectation match nahi hui. Apki feedback zaroor share kari hai team ko, aur aglay bar better experience dene ki koshish karein ge. Aapka shukria 🙏"
+        },
+        {
+          "aspect": "price",
+          "sentiment": "negative",
+          "confidence": 0.85,
+          "auto_reply": "Humara dil se afsos hai ke aapko product pasand nahi aaya aur price zyada laga. Aapki feedback hum letein hain, aur quality aur value dono ko behtar karne ki koshish karenge. Agli baar aapko better experience dena chahte hain."
+        },
+        {
+          "aspect": "remote quality",
+          "sentiment": "negative",
+          "confidence": 0.85,
+          "auto_reply": "Humara dil se afsos hai ke aapko remote ki quality pasand nahi aayi — hum samajhtay hain ke product as per image na hona disappoint kar sakta hai. Aapki feedback humare liye important hai, aur hum is par zaroor kaam karenge."
+        }
+      ]
+    },
+    {
+      "review": "Worst experience ever. Damaged packaging, wrong item, and no response from seller.",
+      "normalized": "worst experience ever damaged packaging wrong item and no response from seller",
+      "absa": {
+        "aspects": [
+          {
+            "aspect": "packaging",
+            "sentiment": "negative",
+            "confidence": 0.95
+          },
+          {
+            "aspect": "item accuracy",
+            "sentiment": "negative",
+            "confidence": 0.95
+          },
+          {
+            "aspect": "seller service",
+            "sentiment": "negative",
+            "confidence": 0.9
+          }
+        ]
+      },
+      "actions": [
+        {
+          "aspect": "packaging",
+          "sentiment": "negative",
+          "confidence": 0.95,
+          "auto_reply": "Humari taraf se maafi chahte hain — packaging aur wrong item ki wajah se apko takleef hui, ye bilkul acceptable nahi. Apki issue ko jald se jald resolve karna chahenge, plz DM karein taake hum aapki madad kar saken."
+        },
+        {
+          "aspect": "item accuracy",
+          "sentiment": "negative",
+          "confidence": 0.95,
+          "auto_reply": "So sorry for the bad experience – we’re truly apologetic about the damaged packaging and wrong item. We’ll contact you right away to resolve this."
+        },
+        {
+          "aspect": "seller service",
+          "sentiment": "negative",
+          "confidence": 0.9,
+          "auto_reply": "So sorry for the bad experience, apke liye wrong item aur damaged packaging ki wajah se bahut afsos hai. Hum issue resolve karenge – plz share order details with us."
+        }
+      ]
+    },
+    {
+      "review": "ye achi items h quality bi theek but price zaida h",
+      "normalized": "ye achi items h quality bi theek but price zaida h",
+      "absa": {
+        "aspects": [
+          {
+            "aspect": "quality",
+            "sentiment": "positive",
+            "confidence": 0.8
+          },
+          {
+            "aspect": "price",
+            "sentiment": "negative",
+            "confidence": 0.8
+          }
+        ]
+      },
+      "actions": [
+        {
+          "aspect": "quality",
+          "sentiment": "positive",
+          "confidence": 0.8,
+          "auto_reply": ""
+        },
+        {
+          "aspect": "price",
+          "sentiment": "negative",
+          "confidence": 0.8,
+          "auto_reply": "Maafi chahta hoon ke price apko zyada laga. Hum quality ke sath affordable pricing ka bhi khayal rakhte hain, aapki feedback zaroor note karenge. Shukriya!"
+        }
+      ]
+    },
+    {
+      "review": "Good product but delivery was very late and packaging was damaged",
+      "normalized": "good product but delivery was very late and packaging was damaged",
+      "absa": {
+        "aspects": [
+          {
+            "aspect": "product quality",
+            "sentiment": "positive",
+            "confidence": 0.8
+          },
+          {
+            "aspect": "delivery",
+            "sentiment": "negative",
+            "confidence": 0.85
+          },
+          {
+            "aspect": "packaging",
+            "sentiment": "negative",
+            "confidence": 0.8
+          }
+        ]
+      },
+      "actions": [
+        {
+          "aspect": "product quality",
+          "sentiment": "positive",
+          "confidence": 0.8,
+          "auto_reply": ""
+        },
+        {
+          "aspect": "delivery",
+          "sentiment": "negative",
+          "confidence": 0.85,
+          "auto_reply": "Sorry for the late delivery and damaged packaging – hamari taraf se kuch kami hui, apki pasand ka product safe pohanchana chahay thay. Next time zaroor better experience denge, apka shukriya!"
+        },
+        {
+          "aspect": "packaging",
+          "sentiment": "negative",
+          "confidence": 0.8,
+          "auto_reply": "Sorry for the delay and damaged packaging – hamari taraf se kuch kami hui, apki pasand ka sahi tarah huwa na ho humein afsos hai. Agli baar better experience dene ki koshish karenge."
+        }
+      ]
+    },
+    {
+      "review": "Quality is ok but size is too small for me",
+      "normalized": "quality is ok but size is too small for me",
+      "absa": {
+        "aspects": [
+          {
+            "aspect": "quality",
+            "sentiment": "positive",
+            "confidence": 0.75
+          },
+          {
+            "aspect": "size",
+            "sentiment": "negative",
+            "confidence": 0.8
+          }
+        ]
+      },
+      "actions": [
+        {
+          "aspect": "quality",
+          "sentiment": "positive",
+          "confidence": 0.75,
+          "auto_reply": ""
+        },
+        {
+          "aspect": "size",
+          "sentiment": "negative",
+          "confidence": 0.8,
+          "auto_reply": "Sorry for the inconvenience, size issue samajh sakta hain. Next time please apna correct size check kar len for better fit."
+        }
+      ]
+    },
+    {
+      "review": "Packing was not good at all come little bit late But mouse is working well",
+      "normalized": "packing was not good at all come little bit late but mouse is working well",
+      "absa": {
+        "aspects": [
+          {
+            "aspect": "packaging",
+            "sentiment": "negative",
+            "confidence": 0.85
+          },
+          {
+            "aspect": "delivery",
+            "sentiment": "negative",
+            "confidence": 0.75
+          },
+          {
+            "aspect": "functionality",
+            "sentiment": "positive",
+            "confidence": 0.85
+          }
+        ]
+      },
+      "actions": [
+        {
+          "aspect": "packaging",
+          "sentiment": "negative",
+          "confidence": 0.85,
+          "auto_reply": "Sorry for the delay aur weak packaging ki wajah se paish aane wali tamam mushkil ke liye. Next time better packaging ka khayal rakhenge. Mouse theek chal raha hai, iski khushi hai!"
+        },
+        {
+          "aspect": "delivery",
+          "sentiment": "negative",
+          "confidence": 0.75,
+          "auto_reply": "Maafi chahta hun delivery aur packing ki wajah se hui takleef ke liye. Aapka feedback humare liye important hai, next time better experience denge. Mouse theek chal raha hai, iski khushi hui!"
+        },
+        {
+          "aspect": "functionality",
+          "sentiment": "positive",
+          "confidence": 0.85,
+          "auto_reply": ""
+        }
+      ]
+    },
+    {
+      "review": "sound quality is good but battery timing is very short",
+      "normalized": "sound quality is good but battery timing is very short",
+      "absa": {
+        "aspects": [
+          {
+            "aspect": "sound quality",
+            "sentiment": "positive",
+            "confidence": 0.9
+          },
+          {
+            "aspect": "battery timing",
+            "sentiment": "negative",
+            "confidence": 0.9
+          }
+        ]
+      },
+      "actions": [
+        {
+          "aspect": "sound quality",
+          "sentiment": "positive",
+          "confidence": 0.9,
+          "auto_reply": ""
+        },
+        {
+          "aspect": "battery timing",
+          "sentiment": "negative",
+          "confidence": 0.9,
+          "auto_reply": "Sorry for the inconvenience, battery timing ki issue ki wajah se apko pareshani hui, hum is par jald az jald kaam karenge. Aapki feedback hamare liye important hai, shukriya!"
+        }
+      ]
+    },
+    {
+      "review": "amazing product but length chouti hai aur delivery b late thi",
+      "normalized": "amazing product but length chouti hai aur delivery b late thi",
+      "absa": {
+        "aspects": [
+          {
+            "aspect": "product quality",
+            "sentiment": "positive",
+            "confidence": 0.85
+          },
+          {
+            "aspect": "size",
+            "sentiment": "negative",
+            "confidence": 0.75
+          },
+          {
+            "aspect": "delivery",
+            "sentiment": "negative",
+            "confidence": 0.8
+          }
+        ]
+      },
+      "actions": [
+        {
+          "aspect": "product quality",
+          "sentiment": "positive",
+          "confidence": 0.85,
+          "auto_reply": ""
+        },
+        {
+          "aspect": "size",
+          "sentiment": "negative",
+          "confidence": 0.75,
+          "auto_reply": "We’re sorry for the delay in delivery and that the length was chota. We’ll work on improving both service and product details. Thank you for your feedback!"
+        },
+        {
+          "aspect": "delivery",
+          "sentiment": "negative",
+          "confidence": 0.8,
+          "auto_reply": "Sorry for the delay in delivery aur length ki issue ki baar mein — apki puri bhat poori wapas ya replacement kar denge. Shukriya apka feedback ke liye!"
+        }
+      ]
+    },
+    {
+      "review": "Nice design but the sole is not comfortable otherwise its good",
+      "normalized": "nice design but the sole is not comfortable otherwise its good",
+      "absa": {
+        "aspects": [
+          {
+            "aspect": "design",
+            "sentiment": "positive",
+            "confidence": 0.8
+          },
+          {
+            "aspect": "sole comfort",
+            "sentiment": "negative",
+            "confidence": 0.8
+          },
+          {
+            "aspect": "overall quality",
+            "sentiment": "positive",
+            "confidence": 0.7
+          }
+        ]
+      },
+      "actions": [
+        {
+          "aspect": "design",
+          "sentiment": "positive",
+          "confidence": 0.8,
+          "auto_reply": ""
+        },
+        {
+          "aspect": "sole comfort",
+          "sentiment": "negative",
+          "confidence": 0.8,
+          "auto_reply": "Sorry for the inconvenience, we regret that the sole comfort didn't meet your expectations. We'll share your feedback with the team to improve. Thanks for your support!"
+        },
+        {
+          "aspect": "overall quality",
+          "sentiment": "positive",
+          "confidence": 0.7,
+          "auto_reply": ""
+        }
+      ]
+    },
+    {
+      "review": "the material is ok but width and length is too small",
+      "normalized": "the material is ok but width and length is too small",
+      "absa": {
+        "aspects": [
+          {
+            "aspect": "material",
+            "sentiment": "positive",
+            "confidence": 0.75
+          },
+          {
+            "aspect": "width",
+            "sentiment": "negative",
+            "confidence": 0.8
+          },
+          {
+            "aspect": "length",
+            "sentiment": "negative",
+            "confidence": 0.8
+          }
+        ]
+      },
+      "actions": [
+        {
+          "aspect": "material",
+          "sentiment": "positive",
+          "confidence": 0.75,
+          "auto_reply": ""
+        },
+        {
+          "aspect": "width",
+          "sentiment": "negative",
+          "confidence": 0.8,
+          "auto_reply": "Sorry for the inconvenience, apke order ki width aur length aapki expectations par nahi utri. Hum is issue ko jald se jald resolve karenge – plz hume apka correct size bata dein taake hum aapko replacement ya refund provide kar saken."
+        },
+        {
+          "aspect": "length",
+          "sentiment": "negative",
+          "confidence": 0.8,
+          "auto_reply": "We are really sorry to hear that the size didn’t meet your expectations. We'll look into this and improve our product descriptions for better clarity. Apologies for the inconvenience!"
+        }
+      ]
+    },
+    {
+      "review": "original hands-free with perfect sound quality but you should deliver it in a box to avoid damages",
+      "normalized": "original hands free with perfect sound quality but you should deliver it in a box to avoid damages",
+      "absa": {
+        "aspects": [
+          {
+            "aspect": "authenticity",
+            "sentiment": "positive",
+            "confidence": 0.9
+          },
+          {
+            "aspect": "sound quality",
+            "sentiment": "positive",
+            "confidence": 0.95
+          },
+          {
+            "aspect": "packaging",
+            "sentiment": "negative",
+            "confidence": 0.85
+          }
+        ]
+      },
+      "actions": [
+        {
+          "aspect": "authenticity",
+          "sentiment": "positive",
+          "confidence": 0.9,
+          "auto_reply": ""
+        },
+        {
+          "aspect": "sound quality",
+          "sentiment": "positive",
+          "confidence": 0.95,
+          "auto_reply": ""
+        },
+        {
+          "aspect": "packaging",
+          "sentiment": "negative",
+          "confidence": 0.85,
+          "auto_reply": "Maafi chahta hoon customer ko inconvenience ke liye. Aapki feedback zaroor note ki hai — agle bar product ko proper box mein deliver karenge taake koi damage na ho. Shukriya apki understanding ke liye!"
+        }
+      ]
+    },
+    {
+      "review": "packing is good delivery on time but sound quality is very low and not clear",
+      "normalized": "packing is good delivery on time but sound quality is very low and not clear",
+      "absa": {
+        "aspects": [
+          {
+            "aspect": "packaging",
+            "sentiment": "positive",
+            "confidence": 0.85
+          },
+          {
+            "aspect": "delivery",
+            "sentiment": "positive",
+            "confidence": 0.9
+          },
+          {
+            "aspect": "sound quality",
+            "sentiment": "negative",
+            "confidence": 0.9
+          }
+        ]
+      },
+      "actions": [
+        {
+          "aspect": "packaging",
+          "sentiment": "positive",
+          "confidence": 0.85,
+          "auto_reply": ""
+        },
+        {
+          "aspect": "delivery",
+          "sentiment": "positive",
+          "confidence": 0.9,
+          "auto_reply": ""
+        },
+        {
+          "aspect": "sound quality",
+          "sentiment": "negative",
+          "confidence": 0.9,
+          "auto_reply": "We’re really sorry apko sound quality pasand nahi aayi. We’ll definitely share your feedback with the team to improve. Thank you for your review – we appreciate your honesty."
+        }
+      ]
+    }
+  ],
+  "executive_summary": "The top complaint aspect is \"item as described,\" mentioned negatively in 3 reviews, often related to accuracy and quality. Of the 18 reviews, approximately 7 are negative, 6 are positive, and 5 are neutral. The most urgent flagged review is [7], which reports severe issues with item accuracy, high price, and poor remote quality—indicating a critical customer dissatisfaction. Immediate attention is needed to address product representation and quality control.",
+  "meta": {
+    "count": 18,
+    "generated_with": "absa_engine (live Qwen) + action_engine"
+  }
+}
