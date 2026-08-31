@@ -47,6 +47,10 @@ SYSTEM_PROMPT = (
     "quality, price, delivery, packaging, sound, battery, seller service, "
     "item-as-described) and label EACH aspect's sentiment as positive, "
     "negative, or neutral with a confidence between 0 and 1. "
+    "IMPORTANT: when a review clearly praises some aspects AND criticizes "
+    "others (mixed sentiment), assign positive sentiment to the praised "
+    "aspects and negative sentiment to the criticized aspects — do NOT let "
+    "one side dominate. "
     "Respond with ONLY a raw JSON array, no markdown, no commentary."
 )
 
@@ -96,25 +100,32 @@ FEW_SHOT_EXAMPLES = [
             {"aspect": "remote quality", "sentiment": "negative", "confidence": 0.85},
         ]},
     },
-    # neutral (mixed aspects), CSV L8123
+    # neutral (mixed: quality praised, price criticized), CSV cleaned L640
     {
-        "review": "Watch achi hai but Feature zyada nhi hai expensive hai thori but achi "
-                  "hai Alarm Ka btay hai but alarm nhi hai watch me",
+        "review": "ye achi items h quality bi theek but price zaida h",
         "output": {"aspects": [
-            {"aspect": "watch quality", "sentiment": "positive", "confidence": 0.8},
-            {"aspect": "features", "sentiment": "negative", "confidence": 0.7},
-            {"aspect": "price", "sentiment": "negative", "confidence": 0.7},
-            {"aspect": "alarm", "sentiment": "negative", "confidence": 0.8},
+            {"aspect": "quality", "sentiment": "positive", "confidence": 0.8},
+            {"aspect": "price", "sentiment": "negative", "confidence": 0.8},
         ]},
     },
-    # neutral (mixed aspects), CSV L15170
+    # neutral (mixed: product praised, delivery + size criticized), CSV cleaned L4845
     {
-        "review": "Same cheez deliver hui time sa pehla bht achi timing hai bas awaz "
-                  "thori si kam hai baki sab kuch bht acha hai",
+        "review": "amazing product.. length chouti hai... but product achi hai... "
+                  "aur delivery b late thi..but satisfied in the end",
         "output": {"aspects": [
-            {"aspect": "item as described", "sentiment": "positive", "confidence": 0.85},
-            {"aspect": "delivery", "sentiment": "positive", "confidence": 0.9},
-            {"aspect": "sound", "sentiment": "neutral", "confidence": 0.6},
+            {"aspect": "product quality", "sentiment": "positive", "confidence": 0.85},
+            {"aspect": "size", "sentiment": "negative", "confidence": 0.75},
+            {"aspect": "delivery", "sentiment": "negative", "confidence": 0.8},
+        ]},
+    },
+    # neutral (mixed: functionality praised, packaging + delivery criticized), CSV cleaned L308
+    {
+        "review": "Packing was not good at all come little bit late "
+                  "But mouse is working well",
+        "output": {"aspects": [
+            {"aspect": "packaging", "sentiment": "negative", "confidence": 0.85},
+            {"aspect": "delivery", "sentiment": "negative", "confidence": 0.75},
+            {"aspect": "functionality", "sentiment": "positive", "confidence": 0.85},
         ]},
     },
 ]

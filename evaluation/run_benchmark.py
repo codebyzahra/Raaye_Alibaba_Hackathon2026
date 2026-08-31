@@ -68,8 +68,10 @@ def load_balanced_test_set(per_class: int) -> list[dict]:
 def overall_sentiment(aspects: list[dict]) -> str:
     """Collapse aspect-level sentiments into one overall label.
 
-    Majority vote over aspects; ties broken by total confidence. If the
-    majority is only 'neutral' with no polarity signal, stays neutral.
+    Majority vote over aspects. When positive and negative votes are
+    tied, return 'neutral' (mixed sentiment). Other ties broken by total
+    confidence. If the majority is only 'neutral' with no polarity signal,
+    stays neutral.
     """
     if not aspects:
         return "neutral"
@@ -85,6 +87,8 @@ def overall_sentiment(aspects: list[dict]) -> str:
     winners = [s for s, c in votes.items() if c == top]
     if len(winners) == 1:
         return winners[0]
+    if "positive" in winners and "negative" in winners:
+        return "neutral"
     return max(winners, key=lambda s: confidence[s])
 
 
