@@ -5,7 +5,6 @@ import re
 import inspect
 import functools
 from typing import (
-    TYPE_CHECKING,
     Any,
     Tuple,
     Mapping,
@@ -17,21 +16,18 @@ from typing import (
     overload,
 )
 from pathlib import Path
-from datetime import date, datetime
-from typing_extensions import TypeGuard, get_args
+from typing_extensions import TypeGuard
 
 import sniffio
 
-from .._types import Omit, NotGiven, FileTypes, ArrayFormat, HeadersLike
+from .._types import NotGiven, FileTypes, NotGivenOr, HeadersLike
+from .._compat import parse_date as parse_date, parse_datetime as parse_datetime
 
 _T = TypeVar("_T")
 _TupleT = TypeVar("_TupleT", bound=Tuple[object, ...])
 _MappingT = TypeVar("_MappingT", bound=Mapping[str, object])
 _SequenceT = TypeVar("_SequenceT", bound=Sequence[object])
 CallableT = TypeVar("CallableT", bound=Callable[..., Any])
-
-if TYPE_CHECKING:
-    from ..lib.azure import AzureOpenAI, AsyncAzureOpenAI
 
 
 def flatten(t: Iterable[Iterable[_T]]) -> list[_T]:
@@ -44,36 +40,17 @@ def extract_files(
     query: Mapping[str, object],
     *,
     paths: Sequence[Sequence[str]],
-    array_format: ArrayFormat = "brackets",
 ) -> list[tuple[str, FileTypes]]:
     """Recursively extract files from the given dictionary based on specified paths.
 
     A path may look like this ['foo', 'files', '<array>', 'data'].
 
-    ``array_format`` controls how ``<array>`` segments contribute to the emitted
-    field name. Supported values: ``"brackets"`` (``foo[]``), ``"repeat"`` and
-    ``"comma"`` (``foo``), ``"indices"`` (``foo[0]``, ``foo[1]``).
-
     Note: this mutates the given dictionary.
     """
     files: list[tuple[str, FileTypes]] = []
     for path in paths:
-        files.extend(_extract_items(query, path, index=0, flattened_key=None, array_format=array_format))
+        files.extend(_extract_items(query, path, index=0, flattened_key=None))
     return files
-
-
-def _array_suffix(array_format: ArrayFormat, array_index: int) -> str:
-    if array_format == "brackets":
-        return "[]"
-    if array_format == "indices":
-        return f"[{array_index}]"
-    if array_format == "repeat" or array_format == "comma":
-        # Both repeat the bare field name for each file part; there is no
-        # meaningful way to comma-join binary parts.
-        return ""
-    raise NotImplementedError(
-        f"Unknown array_format value: {array_format}, choose from {', '.join(get_args(ArrayFormat))}"
-    )
 
 
 def _extract_items(
@@ -82,12 +59,11 @@ def _extract_items(
     *,
     index: int,
     flattened_key: str | None,
-    array_format: ArrayFormat,
 ) -> list[tuple[str, FileTypes]]:
     try:
         key = path[index]
     except IndexError:
-        if not is_given(obj):
+        if isinstance(obj, NotGiven):
             # no value was provided - we can safely ignore
             return []
 
@@ -95,26 +71,15 @@ def _extract_items(
         from .._files import assert_is_file_content
 
         # We have exhausted the path, return the entry we found.
-        assert flattened_key is not None
-
-        if is_list(obj):
-            files: list[tuple[str, FileTypes]] = []
-            for array_index, entry in enumerate(obj):
-                suffix = _array_suffix(array_format, array_index)
-                emitted_key = (flattened_key + suffix) if flattened_key else suffix
-                assert_is_file_content(entry, key=emitted_key)
-                files.append((emitted_key, cast(FileTypes, entry)))
-            return files
-
         assert_is_file_content(obj, key=flattened_key)
+        assert flattened_key is not None
         return [(flattened_key, cast(FileTypes, obj))]
 
     index += 1
     if is_dict(obj):
         try:
-            # Remove the field if there are no more dict keys in the path,
-            # only "<array>" traversal markers or end.
-            if all(p == "<array>" for p in path[index:]):
+            # We are at the last entry in the path so we must remove the field
+            if (len(path)) == index:
                 item = obj.pop(key)
             else:
                 item = obj[key]
@@ -132,7 +97,6 @@ def _extract_items(
             path,
             index=index,
             flattened_key=flattened_key,
-            array_format=array_format,
         )
     elif is_list(obj):
         if key != "<array>":
@@ -144,12 +108,9 @@ def _extract_items(
                     item,
                     path,
                     index=index,
-                    flattened_key=(
-                        (flattened_key if flattened_key is not None else "") + _array_suffix(array_format, array_index)
-                    ),
-                    array_format=array_format,
+                    flattened_key=flattened_key + "[]" if flattened_key is not None else "[]",
                 )
-                for array_index, item in enumerate(obj)
+                for item in obj
             ]
         )
 
@@ -157,14 +118,14 @@ def _extract_items(
     return []
 
 
-def is_given(obj: _T | NotGiven | Omit) -> TypeGuard[_T]:
-    return not isinstance(obj, NotGiven) and not isinstance(obj, Omit)
+def is_given(obj: NotGivenOr[_T]) -> TypeGuard[_T]:
+    return not isinstance(obj, NotGiven)
 
 
 # Type safe methods for narrowing types with TypeVars.
 # The default narrowing for isinstance(obj, dict) is dict[unknown, unknown],
 # however this cause Pyright to rightfully report errors. As we know we don't
-# care about the contained types we can safely use `object` in its place.
+# care about the contained types we can safely use `object` in it's place.
 #
 # There are two separate functions defined, `is_*` and `is_*_t` for different use cases.
 # `is_*` is for when you're dealing with an unknown input
@@ -205,6 +166,21 @@ def is_list(obj: object) -> TypeGuard[list[object]]:
 
 def is_iterable(obj: object) -> TypeGuard[Iterable[object]]:
     return isinstance(obj, Iterable)
+
+
+def deepcopy_minimal(item: _T) -> _T:
+    """Minimal reimplementation of copy.deepcopy() that will only copy certain object types:
+
+    - mappings, e.g. `dict`
+    - list
+
+    This is done for performance reasons.
+    """
+    if is_mapping(item):
+        return cast(_T, {k: deepcopy_minimal(v) for k, v in item.items()})
+    if is_list(item):
+        return cast(_T, [deepcopy_minimal(entry) for entry in item])
+    return item
 
 
 # copied from https://github.com/Rapptz/RoboDanny
@@ -387,13 +363,12 @@ def file_from_path(path: str) -> FileTypes:
 
 def get_required_header(headers: HeadersLike, header: str) -> str:
     lower_header = header.lower()
-    if is_mapping_t(headers):
-        # mypy doesn't understand the type narrowing here
-        for k, v in headers.items():  # type: ignore
+    if isinstance(headers, Mapping):
+        for k, v in headers.items():
             if k.lower() == lower_header and isinstance(v, str):
                 return v
 
-    # to deal with the case where the header looks like X-Request-Id
+    """ to deal with the case where the header looks like Stainless-Event-Id """
     intercaps_header = re.sub(r"([^\w])(\w)", lambda pat: pat.group(1) + pat.group(2).upper(), header.capitalize())
 
     for normalized_header in [header, lower_header, header.upper(), intercaps_header]:
@@ -419,31 +394,3 @@ def lru_cache(*, maxsize: int | None = 128) -> Callable[[CallableT], CallableT]:
         maxsize=maxsize,
     )
     return cast(Any, wrapper)  # type: ignore[no-any-return]
-
-
-def json_safe(data: object) -> object:
-    """Translates a mapping / sequence recursively in the same fashion
-    as `pydantic` v2's `model_dump(mode="json")`.
-    """
-    if is_mapping(data):
-        return {json_safe(key): json_safe(value) for key, value in data.items()}
-
-    if is_iterable(data) and not isinstance(data, (str, bytes, bytearray)):
-        return [json_safe(item) for item in data]
-
-    if isinstance(data, (datetime, date)):
-        return data.isoformat()
-
-    return data
-
-
-def is_azure_client(client: object) -> TypeGuard[AzureOpenAI]:
-    from ..lib.azure import AzureOpenAI
-
-    return isinstance(client, AzureOpenAI)
-
-
-def is_async_azure_client(client: object) -> TypeGuard[AsyncAzureOpenAI]:
-    from ..lib.azure import AsyncAzureOpenAI
-
-    return isinstance(client, AsyncAzureOpenAI)

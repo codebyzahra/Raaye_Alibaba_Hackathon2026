@@ -1,18 +1,23 @@
-# File generated from our OpenAPI spec by Castiron. See CONTRIBUTING.md for details.
+# File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 from __future__ import annotations
 
+import time
 import typing_extensions
 from typing import Mapping, cast
 from typing_extensions import Literal
 
-import httpx2
+import httpx
 
 from .. import _legacy_response
-from ..types import FilePurpose, file_list_params, file_create_params
-from .._files import deepcopy_with_paths
-from .._types import Body, Omit, Query, Headers, NotGiven, FileTypes, omit, not_given
-from .._utils import extract_files, path_template, maybe_transform, async_maybe_transform
+from ..types import file_list_params, file_create_params
+from .._types import NOT_GIVEN, Body, Query, Headers, NotGiven, FileTypes
+from .._utils import (
+    extract_files,
+    maybe_transform,
+    deepcopy_minimal,
+    async_maybe_transform,
+)
 from .._compat import cached_property
 from .._resource import SyncAPIResource, AsyncAPIResource
 from .._response import (
@@ -23,82 +28,58 @@ from .._response import (
     to_custom_streamed_response_wrapper,
     async_to_custom_streamed_response_wrapper,
 )
-from ..lib._files import (
-    wait_for_file_processing as _wait_for_file_processing,
-    async_wait_for_file_processing as _async_wait_for_file_processing,
+from ..pagination import SyncPage, AsyncPage
+from .._base_client import (
+    AsyncPaginator,
+    make_request_options,
 )
-from ..pagination import SyncCursorPage, AsyncCursorPage
-from .._base_client import AsyncPaginator, make_request_options
 from ..types.file_object import FileObject
 from ..types.file_deleted import FileDeleted
-from ..types.file_purpose import FilePurpose
 
 __all__ = ["Files", "AsyncFiles"]
 
 
 class Files(SyncAPIResource):
-    """
-    Files are used to upload documents that can be used with features like Assistants and Fine-tuning.
-    """
-
     @cached_property
     def with_raw_response(self) -> FilesWithRawResponse:
-        """
-        This property can be used as a prefix for any HTTP method call to return
-        the raw response object instead of the parsed content.
-
-        For more information, see https://www.github.com/openai/openai-python#accessing-raw-response-data-eg-headers
-        """
         return FilesWithRawResponse(self)
 
     @cached_property
     def with_streaming_response(self) -> FilesWithStreamingResponse:
-        """
-        An alternative to `.with_raw_response` that doesn't eagerly read the response body.
-
-        For more information, see https://www.github.com/openai/openai-python#with_streaming_response
-        """
         return FilesWithStreamingResponse(self)
 
     def create(
         self,
         *,
         file: FileTypes,
-        purpose: FilePurpose,
-        expires_after: file_create_params.ExpiresAfter | Omit = omit,
+        purpose: Literal["assistants", "batch", "fine-tune", "vision"],
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
-        timeout: float | httpx2.Timeout | None | NotGiven = not_given,
+        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> FileObject:
         """Upload a file that can be used across various endpoints.
 
         Individual files can be
-        up to 512 MB, and each project can store up to 2.5 TB of files in total. There
-        is no organization-wide storage limit. Uploads to this endpoint are rate-limited
-        to 1,000 requests per minute per authenticated user.
+        up to 512 MB, and the size of all files uploaded by one organization can be up
+        to 100 GB.
 
-        - The Assistants API supports files up to 2 million tokens and of specific file
-          types. See the
-          [Assistants Tools guide](https://platform.openai.com/docs/assistants/tools)
-          for details.
-        - The Fine-tuning API only supports `.jsonl` files. The input also has certain
-          required formats for fine-tuning
-          [chat](https://platform.openai.com/docs/api-reference/fine-tuning/chat-input)
-          or
-          [completions](https://platform.openai.com/docs/api-reference/fine-tuning/completions-input)
-          models.
-        - The Batch API only supports `.jsonl` files up to 200 MB in size. The input
-          also has a specific required
-          [format](https://platform.openai.com/docs/api-reference/batch/request-input).
-        - For Retrieval or `file_search` ingestion, upload files here first. If you need
-          to attach multiple uploaded files to the same vector store, use
-          [`/vector_stores/{vector_store_id}/file_batches`](https://platform.openai.com/docs/api-reference/vector-stores-file-batches/createBatch)
-          instead of attaching them one by one. Vector store attachment has separate
-          limits from file upload, including 2,000 attached files per minute per
-          organization.
+        The Assistants API supports files up to 2 million tokens and of specific file
+        types. See the
+        [Assistants Tools guide](https://platform.openai.com/docs/assistants/tools) for
+        details.
+
+        The Fine-tuning API only supports `.jsonl` files. The input also has certain
+        required formats for fine-tuning
+        [chat](https://platform.openai.com/docs/api-reference/fine-tuning/chat-input) or
+        [completions](https://platform.openai.com/docs/api-reference/fine-tuning/completions-input)
+        models.
+
+        The Batch API only supports `.jsonl` files up to 100 MB in size. The input also
+        has a specific required
+        [format](https://platform.openai.com/docs/api-reference/batch/request-input).
 
         Please [contact us](https://help.openai.com/) if you need to increase these
         storage limits.
@@ -106,18 +87,14 @@ class Files(SyncAPIResource):
         Args:
           file: The File object (not file name) to be uploaded.
 
-          purpose:
-              The intended purpose of the uploaded file. One of:
+          purpose: The intended purpose of the uploaded file.
 
-              - `assistants`: Used in the Assistants API
-              - `batch`: Used in the Batch API
-              - `fine-tune`: Used for fine-tuning
-              - `vision`: Images used for vision fine-tuning
-              - `user_data`: Flexible file type for any purpose
-              - `evals`: Used for eval data sets
-
-          expires_after: The expiration policy for a file. By default, files with `purpose=batch` expire
-              after 30 days and all other files are persisted until they are manually deleted.
+              Use "assistants" for
+              [Assistants](https://platform.openai.com/docs/api-reference/assistants) and
+              [Message](https://platform.openai.com/docs/api-reference/messages) files,
+              "vision" for Assistants image file inputs, "batch" for
+              [Batch API](https://platform.openai.com/docs/guides/batch), and "fine-tune" for
+              [Fine-tuning](https://platform.openai.com/docs/api-reference/fine-tuning).
 
           extra_headers: Send extra headers
 
@@ -127,13 +104,11 @@ class Files(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        body = deepcopy_with_paths(
+        body = deepcopy_minimal(
             {
                 "file": file,
                 "purpose": purpose,
-                "expires_after": expires_after,
-            },
-            [["file"]],
+            }
         )
         files = extract_files(cast(Mapping[str, object], body), paths=[["file"]])
         # It should be noted that the actual Content-Type header that will be
@@ -145,11 +120,7 @@ class Files(SyncAPIResource):
             body=maybe_transform(body, file_create_params.FileCreateParams),
             files=files,
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"bearer_auth": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=FileObject,
         )
@@ -163,7 +134,7 @@ class Files(SyncAPIResource):
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
-        timeout: float | httpx2.Timeout | None | NotGiven = not_given,
+        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> FileObject:
         """
         Returns information about a specific file.
@@ -180,13 +151,9 @@ class Files(SyncAPIResource):
         if not file_id:
             raise ValueError(f"Expected a non-empty value for `file_id` but received {file_id!r}")
         return self._get(
-            path_template("/files/{file_id}", file_id=file_id),
+            f"/files/{file_id}",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"bearer_auth": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=FileObject,
         )
@@ -194,33 +161,18 @@ class Files(SyncAPIResource):
     def list(
         self,
         *,
-        after: str | Omit = omit,
-        limit: int | Omit = omit,
-        order: Literal["asc", "desc"] | Omit = omit,
-        purpose: str | Omit = omit,
+        purpose: str | NotGiven = NOT_GIVEN,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
-        timeout: float | httpx2.Timeout | None | NotGiven = not_given,
-    ) -> SyncCursorPage[FileObject]:
-        """Returns a list of files.
+        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
+    ) -> SyncPage[FileObject]:
+        """
+        Returns a list of files that belong to the user's organization.
 
         Args:
-          after: A cursor for use in pagination.
-
-        `after` is an object ID that defines your place
-              in the list. For instance, if you make a list request and receive 100 objects,
-              ending with obj_foo, your subsequent call can include after=obj_foo in order to
-              fetch the next page of the list.
-
-          limit: A limit on the number of objects to be returned. Limit can range between 1 and
-              10,000, and the default is 10,000.
-
-          order: Sort order by the `created_at` timestamp of the objects. `asc` for ascending
-              order and `desc` for descending order.
-
           purpose: Only return files with the given purpose.
 
           extra_headers: Send extra headers
@@ -233,22 +185,13 @@ class Files(SyncAPIResource):
         """
         return self._get_api_list(
             "/files",
-            page=SyncCursorPage[FileObject],
+            page=SyncPage[FileObject],
             options=make_request_options(
                 extra_headers=extra_headers,
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                query=maybe_transform(
-                    {
-                        "after": after,
-                        "limit": limit,
-                        "order": order,
-                        "purpose": purpose,
-                    },
-                    file_list_params.FileListParams,
-                ),
-                security={"bearer_auth": True},
+                query=maybe_transform({"purpose": purpose}, file_list_params.FileListParams),
             ),
             model=FileObject,
         )
@@ -262,10 +205,10 @@ class Files(SyncAPIResource):
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
-        timeout: float | httpx2.Timeout | None | NotGiven = not_given,
+        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> FileDeleted:
         """
-        Delete a file and remove it from all vector stores.
+        Delete a file.
 
         Args:
           extra_headers: Send extra headers
@@ -279,13 +222,9 @@ class Files(SyncAPIResource):
         if not file_id:
             raise ValueError(f"Expected a non-empty value for `file_id` but received {file_id!r}")
         return self._delete(
-            path_template("/files/{file_id}", file_id=file_id),
+            f"/files/{file_id}",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"bearer_auth": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=FileDeleted,
         )
@@ -299,10 +238,10 @@ class Files(SyncAPIResource):
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
-        timeout: float | httpx2.Timeout | None | NotGiven = not_given,
+        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> _legacy_response.HttpxBinaryResponseContent:
         """
-        Returns a response containing the contents of the specified file.
+        Returns the contents of the specified file.
 
         Args:
           extra_headers: Send extra headers
@@ -317,13 +256,9 @@ class Files(SyncAPIResource):
             raise ValueError(f"Expected a non-empty value for `file_id` but received {file_id!r}")
         extra_headers = {"Accept": "application/binary", **(extra_headers or {})}
         return self._get(
-            path_template("/files/{file_id}/content", file_id=file_id),
+            f"/files/{file_id}/content",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"bearer_auth": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=_legacy_response.HttpxBinaryResponseContent,
         )
@@ -338,10 +273,10 @@ class Files(SyncAPIResource):
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
-        timeout: float | httpx2.Timeout | None | NotGiven = not_given,
+        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> str:
         """
-        Returns a response containing the contents of the specified file.
+        Returns the contents of the specified file.
 
         Args:
           extra_headers: Send extra headers
@@ -355,13 +290,9 @@ class Files(SyncAPIResource):
         if not file_id:
             raise ValueError(f"Expected a non-empty value for `file_id` but received {file_id!r}")
         return self._get(
-            path_template("/files/{file_id}/content", file_id=file_id),
+            f"/files/{file_id}/content",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"bearer_auth": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=str,
         )
@@ -374,72 +305,63 @@ class Files(SyncAPIResource):
         max_wait_seconds: float = 30 * 60,
     ) -> FileObject:
         """Waits for the given file to be processed, default timeout is 30 mins."""
-        return _wait_for_file_processing(self, id, poll_interval=poll_interval, max_wait_seconds=max_wait_seconds)
+        TERMINAL_STATES = {"processed", "error", "deleted"}
+
+        start = time.time()
+        file = self.retrieve(id)
+        while file.status not in TERMINAL_STATES:
+            self._sleep(poll_interval)
+
+            file = self.retrieve(id)
+            if time.time() - start > max_wait_seconds:
+                raise RuntimeError(
+                    f"Giving up on waiting for file {id} to finish processing after {max_wait_seconds} seconds."
+                )
+
+        return file
 
 
 class AsyncFiles(AsyncAPIResource):
-    """
-    Files are used to upload documents that can be used with features like Assistants and Fine-tuning.
-    """
-
     @cached_property
     def with_raw_response(self) -> AsyncFilesWithRawResponse:
-        """
-        This property can be used as a prefix for any HTTP method call to return
-        the raw response object instead of the parsed content.
-
-        For more information, see https://www.github.com/openai/openai-python#accessing-raw-response-data-eg-headers
-        """
         return AsyncFilesWithRawResponse(self)
 
     @cached_property
     def with_streaming_response(self) -> AsyncFilesWithStreamingResponse:
-        """
-        An alternative to `.with_raw_response` that doesn't eagerly read the response body.
-
-        For more information, see https://www.github.com/openai/openai-python#with_streaming_response
-        """
         return AsyncFilesWithStreamingResponse(self)
 
     async def create(
         self,
         *,
         file: FileTypes,
-        purpose: FilePurpose,
-        expires_after: file_create_params.ExpiresAfter | Omit = omit,
+        purpose: Literal["assistants", "batch", "fine-tune", "vision"],
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
-        timeout: float | httpx2.Timeout | None | NotGiven = not_given,
+        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> FileObject:
         """Upload a file that can be used across various endpoints.
 
         Individual files can be
-        up to 512 MB, and each project can store up to 2.5 TB of files in total. There
-        is no organization-wide storage limit. Uploads to this endpoint are rate-limited
-        to 1,000 requests per minute per authenticated user.
+        up to 512 MB, and the size of all files uploaded by one organization can be up
+        to 100 GB.
 
-        - The Assistants API supports files up to 2 million tokens and of specific file
-          types. See the
-          [Assistants Tools guide](https://platform.openai.com/docs/assistants/tools)
-          for details.
-        - The Fine-tuning API only supports `.jsonl` files. The input also has certain
-          required formats for fine-tuning
-          [chat](https://platform.openai.com/docs/api-reference/fine-tuning/chat-input)
-          or
-          [completions](https://platform.openai.com/docs/api-reference/fine-tuning/completions-input)
-          models.
-        - The Batch API only supports `.jsonl` files up to 200 MB in size. The input
-          also has a specific required
-          [format](https://platform.openai.com/docs/api-reference/batch/request-input).
-        - For Retrieval or `file_search` ingestion, upload files here first. If you need
-          to attach multiple uploaded files to the same vector store, use
-          [`/vector_stores/{vector_store_id}/file_batches`](https://platform.openai.com/docs/api-reference/vector-stores-file-batches/createBatch)
-          instead of attaching them one by one. Vector store attachment has separate
-          limits from file upload, including 2,000 attached files per minute per
-          organization.
+        The Assistants API supports files up to 2 million tokens and of specific file
+        types. See the
+        [Assistants Tools guide](https://platform.openai.com/docs/assistants/tools) for
+        details.
+
+        The Fine-tuning API only supports `.jsonl` files. The input also has certain
+        required formats for fine-tuning
+        [chat](https://platform.openai.com/docs/api-reference/fine-tuning/chat-input) or
+        [completions](https://platform.openai.com/docs/api-reference/fine-tuning/completions-input)
+        models.
+
+        The Batch API only supports `.jsonl` files up to 100 MB in size. The input also
+        has a specific required
+        [format](https://platform.openai.com/docs/api-reference/batch/request-input).
 
         Please [contact us](https://help.openai.com/) if you need to increase these
         storage limits.
@@ -447,18 +369,14 @@ class AsyncFiles(AsyncAPIResource):
         Args:
           file: The File object (not file name) to be uploaded.
 
-          purpose:
-              The intended purpose of the uploaded file. One of:
+          purpose: The intended purpose of the uploaded file.
 
-              - `assistants`: Used in the Assistants API
-              - `batch`: Used in the Batch API
-              - `fine-tune`: Used for fine-tuning
-              - `vision`: Images used for vision fine-tuning
-              - `user_data`: Flexible file type for any purpose
-              - `evals`: Used for eval data sets
-
-          expires_after: The expiration policy for a file. By default, files with `purpose=batch` expire
-              after 30 days and all other files are persisted until they are manually deleted.
+              Use "assistants" for
+              [Assistants](https://platform.openai.com/docs/api-reference/assistants) and
+              [Message](https://platform.openai.com/docs/api-reference/messages) files,
+              "vision" for Assistants image file inputs, "batch" for
+              [Batch API](https://platform.openai.com/docs/guides/batch), and "fine-tune" for
+              [Fine-tuning](https://platform.openai.com/docs/api-reference/fine-tuning).
 
           extra_headers: Send extra headers
 
@@ -468,13 +386,11 @@ class AsyncFiles(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        body = deepcopy_with_paths(
+        body = deepcopy_minimal(
             {
                 "file": file,
                 "purpose": purpose,
-                "expires_after": expires_after,
-            },
-            [["file"]],
+            }
         )
         files = extract_files(cast(Mapping[str, object], body), paths=[["file"]])
         # It should be noted that the actual Content-Type header that will be
@@ -486,11 +402,7 @@ class AsyncFiles(AsyncAPIResource):
             body=await async_maybe_transform(body, file_create_params.FileCreateParams),
             files=files,
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"bearer_auth": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=FileObject,
         )
@@ -504,7 +416,7 @@ class AsyncFiles(AsyncAPIResource):
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
-        timeout: float | httpx2.Timeout | None | NotGiven = not_given,
+        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> FileObject:
         """
         Returns information about a specific file.
@@ -521,13 +433,9 @@ class AsyncFiles(AsyncAPIResource):
         if not file_id:
             raise ValueError(f"Expected a non-empty value for `file_id` but received {file_id!r}")
         return await self._get(
-            path_template("/files/{file_id}", file_id=file_id),
+            f"/files/{file_id}",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"bearer_auth": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=FileObject,
         )
@@ -535,33 +443,18 @@ class AsyncFiles(AsyncAPIResource):
     def list(
         self,
         *,
-        after: str | Omit = omit,
-        limit: int | Omit = omit,
-        order: Literal["asc", "desc"] | Omit = omit,
-        purpose: str | Omit = omit,
+        purpose: str | NotGiven = NOT_GIVEN,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
-        timeout: float | httpx2.Timeout | None | NotGiven = not_given,
-    ) -> AsyncPaginator[FileObject, AsyncCursorPage[FileObject]]:
-        """Returns a list of files.
+        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
+    ) -> AsyncPaginator[FileObject, AsyncPage[FileObject]]:
+        """
+        Returns a list of files that belong to the user's organization.
 
         Args:
-          after: A cursor for use in pagination.
-
-        `after` is an object ID that defines your place
-              in the list. For instance, if you make a list request and receive 100 objects,
-              ending with obj_foo, your subsequent call can include after=obj_foo in order to
-              fetch the next page of the list.
-
-          limit: A limit on the number of objects to be returned. Limit can range between 1 and
-              10,000, and the default is 10,000.
-
-          order: Sort order by the `created_at` timestamp of the objects. `asc` for ascending
-              order and `desc` for descending order.
-
           purpose: Only return files with the given purpose.
 
           extra_headers: Send extra headers
@@ -574,22 +467,13 @@ class AsyncFiles(AsyncAPIResource):
         """
         return self._get_api_list(
             "/files",
-            page=AsyncCursorPage[FileObject],
+            page=AsyncPage[FileObject],
             options=make_request_options(
                 extra_headers=extra_headers,
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                query=maybe_transform(
-                    {
-                        "after": after,
-                        "limit": limit,
-                        "order": order,
-                        "purpose": purpose,
-                    },
-                    file_list_params.FileListParams,
-                ),
-                security={"bearer_auth": True},
+                query=maybe_transform({"purpose": purpose}, file_list_params.FileListParams),
             ),
             model=FileObject,
         )
@@ -603,10 +487,10 @@ class AsyncFiles(AsyncAPIResource):
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
-        timeout: float | httpx2.Timeout | None | NotGiven = not_given,
+        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> FileDeleted:
         """
-        Delete a file and remove it from all vector stores.
+        Delete a file.
 
         Args:
           extra_headers: Send extra headers
@@ -620,13 +504,9 @@ class AsyncFiles(AsyncAPIResource):
         if not file_id:
             raise ValueError(f"Expected a non-empty value for `file_id` but received {file_id!r}")
         return await self._delete(
-            path_template("/files/{file_id}", file_id=file_id),
+            f"/files/{file_id}",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"bearer_auth": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=FileDeleted,
         )
@@ -640,10 +520,10 @@ class AsyncFiles(AsyncAPIResource):
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
-        timeout: float | httpx2.Timeout | None | NotGiven = not_given,
+        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> _legacy_response.HttpxBinaryResponseContent:
         """
-        Returns a response containing the contents of the specified file.
+        Returns the contents of the specified file.
 
         Args:
           extra_headers: Send extra headers
@@ -658,13 +538,9 @@ class AsyncFiles(AsyncAPIResource):
             raise ValueError(f"Expected a non-empty value for `file_id` but received {file_id!r}")
         extra_headers = {"Accept": "application/binary", **(extra_headers or {})}
         return await self._get(
-            path_template("/files/{file_id}/content", file_id=file_id),
+            f"/files/{file_id}/content",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"bearer_auth": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=_legacy_response.HttpxBinaryResponseContent,
         )
@@ -679,10 +555,10 @@ class AsyncFiles(AsyncAPIResource):
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
-        timeout: float | httpx2.Timeout | None | NotGiven = not_given,
+        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> str:
         """
-        Returns a response containing the contents of the specified file.
+        Returns the contents of the specified file.
 
         Args:
           extra_headers: Send extra headers
@@ -696,13 +572,9 @@ class AsyncFiles(AsyncAPIResource):
         if not file_id:
             raise ValueError(f"Expected a non-empty value for `file_id` but received {file_id!r}")
         return await self._get(
-            path_template("/files/{file_id}/content", file_id=file_id),
+            f"/files/{file_id}/content",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"bearer_auth": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=str,
         )
@@ -715,9 +587,20 @@ class AsyncFiles(AsyncAPIResource):
         max_wait_seconds: float = 30 * 60,
     ) -> FileObject:
         """Waits for the given file to be processed, default timeout is 30 mins."""
-        return await _async_wait_for_file_processing(
-            self, id, poll_interval=poll_interval, max_wait_seconds=max_wait_seconds
-        )
+        TERMINAL_STATES = {"processed", "error", "deleted"}
+
+        start = time.time()
+        file = await self.retrieve(id)
+        while file.status not in TERMINAL_STATES:
+            await self._sleep(poll_interval)
+
+            file = await self.retrieve(id)
+            if time.time() - start > max_wait_seconds:
+                raise RuntimeError(
+                    f"Giving up on waiting for file {id} to finish processing after {max_wait_seconds} seconds."
+                )
+
+        return file
 
 
 class FilesWithRawResponse:
@@ -741,7 +624,7 @@ class FilesWithRawResponse:
         )
         self.retrieve_content = (  # pyright: ignore[reportDeprecated]
             _legacy_response.to_raw_response_wrapper(
-                files.retrieve_content,  # pyright: ignore[reportDeprecated],
+                files.retrieve_content  # pyright: ignore[reportDeprecated],
             )
         )
 
@@ -767,7 +650,7 @@ class AsyncFilesWithRawResponse:
         )
         self.retrieve_content = (  # pyright: ignore[reportDeprecated]
             _legacy_response.async_to_raw_response_wrapper(
-                files.retrieve_content,  # pyright: ignore[reportDeprecated],
+                files.retrieve_content  # pyright: ignore[reportDeprecated],
             )
         )
 
@@ -794,7 +677,7 @@ class FilesWithStreamingResponse:
         )
         self.retrieve_content = (  # pyright: ignore[reportDeprecated]
             to_streamed_response_wrapper(
-                files.retrieve_content,  # pyright: ignore[reportDeprecated],
+                files.retrieve_content  # pyright: ignore[reportDeprecated],
             )
         )
 
@@ -821,6 +704,6 @@ class AsyncFilesWithStreamingResponse:
         )
         self.retrieve_content = (  # pyright: ignore[reportDeprecated]
             async_to_streamed_response_wrapper(
-                files.retrieve_content,  # pyright: ignore[reportDeprecated],
+                files.retrieve_content  # pyright: ignore[reportDeprecated],
             )
         )

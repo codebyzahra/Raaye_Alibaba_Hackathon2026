@@ -1,4 +1,4 @@
-# File generated from our OpenAPI spec by Castiron. See CONTRIBUTING.md for details.
+# File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 from .beta import (
     Beta,
@@ -8,14 +8,6 @@ from .beta import (
     BetaWithStreamingResponse,
     AsyncBetaWithStreamingResponse,
 )
-from .chatkit import (
-    ChatKit,
-    AsyncChatKit,
-    ChatKitWithRawResponse,
-    AsyncChatKitWithRawResponse,
-    ChatKitWithStreamingResponse,
-    AsyncChatKitWithStreamingResponse,
-)
 from .threads import (
     Threads,
     AsyncThreads,
@@ -23,14 +15,6 @@ from .threads import (
     AsyncThreadsWithRawResponse,
     ThreadsWithStreamingResponse,
     AsyncThreadsWithStreamingResponse,
-)
-from .responses import (
-    Responses,
-    AsyncResponses,
-    ResponsesWithRawResponse,
-    AsyncResponsesWithRawResponse,
-    ResponsesWithStreamingResponse,
-    AsyncResponsesWithStreamingResponse,
 )
 from .assistants import (
     Assistants,
@@ -40,20 +24,22 @@ from .assistants import (
     AssistantsWithStreamingResponse,
     AsyncAssistantsWithStreamingResponse,
 )
+from .vector_stores import (
+    VectorStores,
+    AsyncVectorStores,
+    VectorStoresWithRawResponse,
+    AsyncVectorStoresWithRawResponse,
+    VectorStoresWithStreamingResponse,
+    AsyncVectorStoresWithStreamingResponse,
+)
 
 __all__ = [
-    "Responses",
-    "AsyncResponses",
-    "ResponsesWithRawResponse",
-    "AsyncResponsesWithRawResponse",
-    "ResponsesWithStreamingResponse",
-    "AsyncResponsesWithStreamingResponse",
-    "ChatKit",
-    "AsyncChatKit",
-    "ChatKitWithRawResponse",
-    "AsyncChatKitWithRawResponse",
-    "ChatKitWithStreamingResponse",
-    "AsyncChatKitWithStreamingResponse",
+    "VectorStores",
+    "AsyncVectorStores",
+    "VectorStoresWithRawResponse",
+    "AsyncVectorStoresWithRawResponse",
+    "VectorStoresWithStreamingResponse",
+    "AsyncVectorStoresWithStreamingResponse",
     "Assistants",
     "AsyncAssistants",
     "AssistantsWithRawResponse",

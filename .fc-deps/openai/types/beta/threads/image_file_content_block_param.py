@@ -1,4 +1,4 @@
-# File generated from our OpenAPI spec by Castiron. See CONTRIBUTING.md for details.
+# File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 from __future__ import annotations
 
@@ -10,10 +10,6 @@ __all__ = ["ImageFileContentBlockParam"]
 
 
 class ImageFileContentBlockParam(TypedDict, total=False):
-    """
-    References an image [File](https://platform.openai.com/docs/api-reference/files) in the content of a message.
-    """
-
     image_file: Required[ImageFileParam]
 
     type: Required[Literal["image_file"]]

@@ -1,4 +1,4 @@
-# File generated from our OpenAPI spec by Castiron. See CONTRIBUTING.md for details.
+# File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 from typing_extensions import Literal
 
@@ -9,10 +9,6 @@ __all__ = ["ImageFileContentBlock"]
 
 
 class ImageFileContentBlock(BaseModel):
-    """
-    References an image [File](https://platform.openai.com/docs/api-reference/files) in the content of a message.
-    """
-
     image_file: ImageFile
 
     type: Literal["image_file"]

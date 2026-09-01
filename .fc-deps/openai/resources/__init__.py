@@ -1,4 +1,4 @@
-# File generated from our OpenAPI spec by Castiron. See CONTRIBUTING.md for details.
+# File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 from .beta import (
     Beta,
@@ -16,14 +16,6 @@ from .chat import (
     ChatWithStreamingResponse,
     AsyncChatWithStreamingResponse,
 )
-from .admin import (
-    Admin,
-    AsyncAdmin,
-    AdminWithRawResponse,
-    AsyncAdminWithRawResponse,
-    AdminWithStreamingResponse,
-    AsyncAdminWithStreamingResponse,
-)
 from .audio import (
     Audio,
     AsyncAudio,
@@ -31,14 +23,6 @@ from .audio import (
     AsyncAudioWithRawResponse,
     AudioWithStreamingResponse,
     AsyncAudioWithStreamingResponse,
-)
-from .evals import (
-    Evals,
-    AsyncEvals,
-    EvalsWithRawResponse,
-    AsyncEvalsWithRawResponse,
-    EvalsWithStreamingResponse,
-    AsyncEvalsWithStreamingResponse,
 )
 from .files import (
     Files,
@@ -64,22 +48,6 @@ from .models import (
     ModelsWithStreamingResponse,
     AsyncModelsWithStreamingResponse,
 )
-from .skills import (
-    Skills,
-    AsyncSkills,
-    SkillsWithRawResponse,
-    AsyncSkillsWithRawResponse,
-    SkillsWithStreamingResponse,
-    AsyncSkillsWithStreamingResponse,
-)
-from .videos import (
-    Videos,
-    AsyncVideos,
-    VideosWithRawResponse,
-    AsyncVideosWithRawResponse,
-    VideosWithStreamingResponse,
-    AsyncVideosWithStreamingResponse,
-)
 from .batches import (
     Batches,
     AsyncBatches,
@@ -95,14 +63,6 @@ from .uploads import (
     AsyncUploadsWithRawResponse,
     UploadsWithStreamingResponse,
     AsyncUploadsWithStreamingResponse,
-)
-from .containers import (
-    Containers,
-    AsyncContainers,
-    ContainersWithRawResponse,
-    AsyncContainersWithRawResponse,
-    ContainersWithStreamingResponse,
-    AsyncContainersWithStreamingResponse,
 )
 from .embeddings import (
     Embeddings,
@@ -136,22 +96,6 @@ from .moderations import (
     ModerationsWithStreamingResponse,
     AsyncModerationsWithStreamingResponse,
 )
-from .vector_stores import (
-    VectorStores,
-    AsyncVectorStores,
-    VectorStoresWithRawResponse,
-    AsyncVectorStoresWithRawResponse,
-    VectorStoresWithStreamingResponse,
-    AsyncVectorStoresWithStreamingResponse,
-)
-from .content_provenance_checks import (
-    ContentProvenanceChecks,
-    AsyncContentProvenanceChecks,
-    ContentProvenanceChecksWithRawResponse,
-    AsyncContentProvenanceChecksWithRawResponse,
-    ContentProvenanceChecksWithStreamingResponse,
-    AsyncContentProvenanceChecksWithStreamingResponse,
-)
 
 __all__ = [
     "Completions",
@@ -184,12 +128,6 @@ __all__ = [
     "AsyncImagesWithRawResponse",
     "ImagesWithStreamingResponse",
     "AsyncImagesWithStreamingResponse",
-    "ContentProvenanceChecks",
-    "AsyncContentProvenanceChecks",
-    "ContentProvenanceChecksWithRawResponse",
-    "AsyncContentProvenanceChecksWithRawResponse",
-    "ContentProvenanceChecksWithStreamingResponse",
-    "AsyncContentProvenanceChecksWithStreamingResponse",
     "Audio",
     "AsyncAudio",
     "AudioWithRawResponse",
@@ -214,12 +152,6 @@ __all__ = [
     "AsyncFineTuningWithRawResponse",
     "FineTuningWithStreamingResponse",
     "AsyncFineTuningWithStreamingResponse",
-    "VectorStores",
-    "AsyncVectorStores",
-    "VectorStoresWithRawResponse",
-    "AsyncVectorStoresWithRawResponse",
-    "VectorStoresWithStreamingResponse",
-    "AsyncVectorStoresWithStreamingResponse",
     "Beta",
     "AsyncBeta",
     "BetaWithRawResponse",
@@ -238,34 +170,4 @@ __all__ = [
     "AsyncUploadsWithRawResponse",
     "UploadsWithStreamingResponse",
     "AsyncUploadsWithStreamingResponse",
-    "Admin",
-    "AsyncAdmin",
-    "AdminWithRawResponse",
-    "AsyncAdminWithRawResponse",
-    "AdminWithStreamingResponse",
-    "AsyncAdminWithStreamingResponse",
-    "Evals",
-    "AsyncEvals",
-    "EvalsWithRawResponse",
-    "AsyncEvalsWithRawResponse",
-    "EvalsWithStreamingResponse",
-    "AsyncEvalsWithStreamingResponse",
-    "Containers",
-    "AsyncContainers",
-    "ContainersWithRawResponse",
-    "AsyncContainersWithRawResponse",
-    "ContainersWithStreamingResponse",
-    "AsyncContainersWithStreamingResponse",
-    "Skills",
-    "AsyncSkills",
-    "SkillsWithRawResponse",
-    "AsyncSkillsWithRawResponse",
-    "SkillsWithStreamingResponse",
-    "AsyncSkillsWithStreamingResponse",
-    "Videos",
-    "AsyncVideos",
-    "VideosWithRawResponse",
-    "AsyncVideosWithRawResponse",
-    "VideosWithStreamingResponse",
-    "AsyncVideosWithStreamingResponse",
 ]

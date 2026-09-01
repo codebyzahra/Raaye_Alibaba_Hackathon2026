@@ -21,7 +21,7 @@ resources:
       region: ${vars.region}
       functionName: raaye-api
       description: "Raaye — AI-powered aspect-based sentiment analysis for Daraz reviews"
-      runtime: custom.debian10
+      runtime: custom.debian11
       handler: index.handler
       timeout: 90
       memorySize: 512

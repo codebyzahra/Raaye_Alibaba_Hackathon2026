@@ -1,16 +1,11 @@
-# File generated from our OpenAPI spec by Castiron. See CONTRIBUTING.md for details.
+# File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 from __future__ import annotations
 
-import io
-import os
-import logging
-import builtins
-from typing import overload
-from pathlib import Path
+from typing import List
+from typing_extensions import Literal
 
-import anyio
-import httpx2
+import httpx
 
 from ... import _legacy_response
 from .parts import (
@@ -21,149 +16,33 @@ from .parts import (
     PartsWithStreamingResponse,
     AsyncPartsWithStreamingResponse,
 )
-from ...types import FilePurpose, upload_create_params, upload_complete_params
-from ..._types import Body, Omit, Query, Headers, NotGiven, SequenceNotStr, omit, not_given
-from ..._utils import path_template, maybe_transform, async_maybe_transform
+from ...types import upload_create_params, upload_complete_params
+from ..._types import NOT_GIVEN, Body, Query, Headers, NotGiven
+from ..._utils import (
+    maybe_transform,
+    async_maybe_transform,
+)
 from ..._compat import cached_property
 from ..._resource import SyncAPIResource, AsyncAPIResource
 from ..._response import to_streamed_response_wrapper, async_to_streamed_response_wrapper
 from ..._base_client import make_request_options
 from ...types.upload import Upload
-from ...types.file_purpose import FilePurpose
 
 __all__ = ["Uploads", "AsyncUploads"]
 
 
-# 64MB
-DEFAULT_PART_SIZE = 64 * 1024 * 1024
-
-log: logging.Logger = logging.getLogger(__name__)
-
-
 class Uploads(SyncAPIResource):
-    """Use Uploads to upload large files in multiple parts."""
-
     @cached_property
     def parts(self) -> Parts:
-        """Use Uploads to upload large files in multiple parts."""
         return Parts(self._client)
 
     @cached_property
     def with_raw_response(self) -> UploadsWithRawResponse:
-        """
-        This property can be used as a prefix for any HTTP method call to return
-        the raw response object instead of the parsed content.
-
-        For more information, see https://www.github.com/openai/openai-python#accessing-raw-response-data-eg-headers
-        """
         return UploadsWithRawResponse(self)
 
     @cached_property
     def with_streaming_response(self) -> UploadsWithStreamingResponse:
-        """
-        An alternative to `.with_raw_response` that doesn't eagerly read the response body.
-
-        For more information, see https://www.github.com/openai/openai-python#with_streaming_response
-        """
         return UploadsWithStreamingResponse(self)
-
-    @overload
-    def upload_file_chunked(
-        self,
-        *,
-        file: os.PathLike[str],
-        mime_type: str,
-        purpose: FilePurpose,
-        bytes: int | None = None,
-        part_size: int | None = None,
-        md5: str | Omit = omit,
-    ) -> Upload:
-        """Splits a file into multiple 64MB parts and uploads them sequentially."""
-
-    @overload
-    def upload_file_chunked(
-        self,
-        *,
-        file: bytes,
-        filename: str,
-        bytes: int,
-        mime_type: str,
-        purpose: FilePurpose,
-        part_size: int | None = None,
-        md5: str | Omit = omit,
-    ) -> Upload:
-        """Splits an in-memory file into multiple 64MB parts and uploads them sequentially."""
-
-    def upload_file_chunked(
-        self,
-        *,
-        file: os.PathLike[str] | bytes,
-        mime_type: str,
-        purpose: FilePurpose,
-        filename: str | None = None,
-        bytes: int | None = None,
-        part_size: int | None = None,
-        md5: str | Omit = omit,
-    ) -> Upload:
-        """Splits the given file into multiple parts and uploads them sequentially.
-
-        ```py
-        from pathlib import Path
-
-        client.uploads.upload_file(
-            file=Path("my-paper.pdf"),
-            mime_type="pdf",
-            purpose="assistants",
-        )
-        ```
-        """
-        if isinstance(file, builtins.bytes):
-            if filename is None:
-                raise TypeError("The `filename` argument must be given for in-memory files")
-
-            if bytes is None:
-                raise TypeError("The `bytes` argument must be given for in-memory files")
-        else:
-            if not isinstance(file, Path):
-                file = Path(file)
-
-            if not filename:
-                filename = file.name
-
-            if bytes is None:
-                bytes = file.stat().st_size
-
-        upload = self.create(
-            bytes=bytes,
-            filename=filename,
-            mime_type=mime_type,
-            purpose=purpose,
-        )
-
-        part_ids: list[str] = []
-
-        if part_size is None:
-            part_size = DEFAULT_PART_SIZE
-
-        if isinstance(file, builtins.bytes):
-            buf: io.FileIO | io.BytesIO = io.BytesIO(file)
-        else:
-            buf = io.FileIO(file)
-
-        try:
-            while True:
-                data = buf.read(part_size)
-                if not data:
-                    # EOF
-                    break
-
-                part = self.parts.create(upload_id=upload.id, data=data)
-                log.info("Uploaded part %s for upload %s", part.id, upload.id)
-                part_ids.append(part.id)
-        finally:
-            buf.close()
-
-        return self.complete(upload_id=upload.id, part_ids=part_ids, md5=md5)
 
     def create(
         self,
@@ -171,14 +50,13 @@ class Uploads(SyncAPIResource):
         bytes: int,
         filename: str,
         mime_type: str,
-        purpose: FilePurpose,
-        expires_after: upload_create_params.ExpiresAfter | Omit = omit,
+        purpose: Literal["assistants", "batch", "fine-tune", "vision"],
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
-        timeout: float | httpx2.Timeout | None | NotGiven = not_given,
+        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> Upload:
         """
         Creates an intermediate
@@ -193,15 +71,14 @@ class Uploads(SyncAPIResource):
         contains all the parts you uploaded. This File is usable in the rest of our
         platform as a regular File object.
 
-        For certain `purpose` values, the correct `mime_type` must be specified. Please
-        refer to documentation for the
-        [supported MIME types for your use case](https://platform.openai.com/docs/assistants/tools/file-search#supported-files).
+        For certain `purpose`s, the correct `mime_type` must be specified. Please refer
+        to documentation for the supported MIME types for your use case:
+
+        - [Assistants](https://platform.openai.com/docs/assistants/tools/file-search/supported-files)
 
         For guidance on the proper filename extensions for each purpose, please follow
         the documentation on
         [creating a File](https://platform.openai.com/docs/api-reference/files/create).
-
-        Returns the Upload object with status `pending`.
 
         Args:
           bytes: The number of bytes in the file you are uploading.
@@ -217,9 +94,6 @@ class Uploads(SyncAPIResource):
 
               See the
               [documentation on File purposes](https://platform.openai.com/docs/api-reference/files/create#files-create-purpose).
-
-          expires_after: The expiration policy for a file. By default, files with `purpose=batch` expire
-              after 30 days and all other files are persisted until they are manually deleted.
 
           extra_headers: Send extra headers
 
@@ -237,16 +111,11 @@ class Uploads(SyncAPIResource):
                     "filename": filename,
                     "mime_type": mime_type,
                     "purpose": purpose,
-                    "expires_after": expires_after,
                 },
                 upload_create_params.UploadCreateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"bearer_auth": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=Upload,
         )
@@ -260,13 +129,11 @@ class Uploads(SyncAPIResource):
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
-        timeout: float | httpx2.Timeout | None | NotGiven = not_given,
+        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> Upload:
         """Cancels the Upload.
 
         No Parts may be added after an Upload is cancelled.
-
-        Returns the Upload object with status `cancelled`.
 
         Args:
           extra_headers: Send extra headers
@@ -280,13 +147,9 @@ class Uploads(SyncAPIResource):
         if not upload_id:
             raise ValueError(f"Expected a non-empty value for `upload_id` but received {upload_id!r}")
         return self._post(
-            path_template("/uploads/{upload_id}/cancel", upload_id=upload_id),
+            f"/uploads/{upload_id}/cancel",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"bearer_auth": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=Upload,
         )
@@ -295,14 +158,14 @@ class Uploads(SyncAPIResource):
         self,
         upload_id: str,
         *,
-        part_ids: SequenceNotStr[str],
-        md5: str | Omit = omit,
+        part_ids: List[str],
+        md5: str | NotGiven = NOT_GIVEN,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
-        timeout: float | httpx2.Timeout | None | NotGiven = not_given,
+        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> Upload:
         """
         Completes the
@@ -317,9 +180,7 @@ class Uploads(SyncAPIResource):
 
         The number of bytes uploaded upon completion must match the number of bytes
         initially specified when creating the Upload object. No Parts may be added after
-        an Upload is completed. Returns the Upload object with status `completed`,
-        including an additional `file` property containing the created usable File
-        object.
+        an Upload is completed.
 
         Args:
           part_ids: The ordered list of Part IDs.
@@ -338,7 +199,7 @@ class Uploads(SyncAPIResource):
         if not upload_id:
             raise ValueError(f"Expected a non-empty value for `upload_id` but received {upload_id!r}")
         return self._post(
-            path_template("/uploads/{upload_id}/complete", upload_id=upload_id),
+            f"/uploads/{upload_id}/complete",
             body=maybe_transform(
                 {
                     "part_ids": part_ids,
@@ -347,151 +208,24 @@ class Uploads(SyncAPIResource):
                 upload_complete_params.UploadCompleteParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"bearer_auth": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=Upload,
         )
 
 
 class AsyncUploads(AsyncAPIResource):
-    """Use Uploads to upload large files in multiple parts."""
-
     @cached_property
     def parts(self) -> AsyncParts:
-        """Use Uploads to upload large files in multiple parts."""
         return AsyncParts(self._client)
 
     @cached_property
     def with_raw_response(self) -> AsyncUploadsWithRawResponse:
-        """
-        This property can be used as a prefix for any HTTP method call to return
-        the raw response object instead of the parsed content.
-
-        For more information, see https://www.github.com/openai/openai-python#accessing-raw-response-data-eg-headers
-        """
         return AsyncUploadsWithRawResponse(self)
 
     @cached_property
     def with_streaming_response(self) -> AsyncUploadsWithStreamingResponse:
-        """
-        An alternative to `.with_raw_response` that doesn't eagerly read the response body.
-
-        For more information, see https://www.github.com/openai/openai-python#with_streaming_response
-        """
         return AsyncUploadsWithStreamingResponse(self)
-
-    @overload
-    async def upload_file_chunked(
-        self,
-        *,
-        file: os.PathLike[str],
-        mime_type: str,
-        purpose: FilePurpose,
-        bytes: int | None = None,
-        part_size: int | None = None,
-        md5: str | Omit = omit,
-    ) -> Upload:
-        """Splits a file into multiple 64MB parts and uploads them sequentially."""
-
-    @overload
-    async def upload_file_chunked(
-        self,
-        *,
-        file: bytes,
-        filename: str,
-        bytes: int,
-        mime_type: str,
-        purpose: FilePurpose,
-        part_size: int | None = None,
-        md5: str | Omit = omit,
-    ) -> Upload:
-        """Splits an in-memory file into multiple 64MB parts and uploads them sequentially."""
-
-    async def upload_file_chunked(
-        self,
-        *,
-        file: os.PathLike[str] | bytes,
-        mime_type: str,
-        purpose: FilePurpose,
-        filename: str | None = None,
-        bytes: int | None = None,
-        part_size: int | None = None,
-        md5: str | Omit = omit,
-    ) -> Upload:
-        """Splits the given file into multiple parts and uploads them sequentially.
-
-        ```py
-        from pathlib import Path
-
-        client.uploads.upload_file(
-            file=Path("my-paper.pdf"),
-            mime_type="pdf",
-            purpose="assistants",
-        )
-        ```
-        """
-        if isinstance(file, builtins.bytes):
-            if filename is None:
-                raise TypeError("The `filename` argument must be given for in-memory files")
-
-            if bytes is None:
-                raise TypeError("The `bytes` argument must be given for in-memory files")
-        else:
-            if not isinstance(file, anyio.Path):
-                file = anyio.Path(file)
-
-            if not filename:
-                filename = file.name
-
-            if bytes is None:
-                stat = await file.stat()
-                bytes = stat.st_size
-
-        upload = await self.create(
-            bytes=bytes,
-            filename=filename,
-            mime_type=mime_type,
-            purpose=purpose,
-        )
-
-        part_ids: list[str] = []
-
-        if part_size is None:
-            part_size = DEFAULT_PART_SIZE
-
-        if isinstance(file, anyio.Path):
-            fd = await file.open("rb")
-            async with fd:
-                while True:
-                    data = await fd.read(part_size)
-                    if not data:
-                        # EOF
-                        break
-
-                    part = await self.parts.create(upload_id=upload.id, data=data)
-                    log.info("Uploaded part %s for upload %s", part.id, upload.id)
-                    part_ids.append(part.id)
-        else:
-            buf = io.BytesIO(file)
-
-            try:
-                while True:
-                    data = buf.read(part_size)
-                    if not data:
-                        # EOF
-                        break
-
-                    part = await self.parts.create(upload_id=upload.id, data=data)
-                    log.info("Uploaded part %s for upload %s", part.id, upload.id)
-                    part_ids.append(part.id)
-            finally:
-                buf.close()
-
-        return await self.complete(upload_id=upload.id, part_ids=part_ids, md5=md5)
 
     async def create(
         self,
@@ -499,14 +233,13 @@ class AsyncUploads(AsyncAPIResource):
         bytes: int,
         filename: str,
         mime_type: str,
-        purpose: FilePurpose,
-        expires_after: upload_create_params.ExpiresAfter | Omit = omit,
+        purpose: Literal["assistants", "batch", "fine-tune", "vision"],
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
-        timeout: float | httpx2.Timeout | None | NotGiven = not_given,
+        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> Upload:
         """
         Creates an intermediate
@@ -521,15 +254,14 @@ class AsyncUploads(AsyncAPIResource):
         contains all the parts you uploaded. This File is usable in the rest of our
         platform as a regular File object.
 
-        For certain `purpose` values, the correct `mime_type` must be specified. Please
-        refer to documentation for the
-        [supported MIME types for your use case](https://platform.openai.com/docs/assistants/tools/file-search#supported-files).
+        For certain `purpose`s, the correct `mime_type` must be specified. Please refer
+        to documentation for the supported MIME types for your use case:
+
+        - [Assistants](https://platform.openai.com/docs/assistants/tools/file-search/supported-files)
 
         For guidance on the proper filename extensions for each purpose, please follow
         the documentation on
         [creating a File](https://platform.openai.com/docs/api-reference/files/create).
-
-        Returns the Upload object with status `pending`.
 
         Args:
           bytes: The number of bytes in the file you are uploading.
@@ -545,9 +277,6 @@ class AsyncUploads(AsyncAPIResource):
 
               See the
               [documentation on File purposes](https://platform.openai.com/docs/api-reference/files/create#files-create-purpose).
-
-          expires_after: The expiration policy for a file. By default, files with `purpose=batch` expire
-              after 30 days and all other files are persisted until they are manually deleted.
 
           extra_headers: Send extra headers
 
@@ -565,16 +294,11 @@ class AsyncUploads(AsyncAPIResource):
                     "filename": filename,
                     "mime_type": mime_type,
                     "purpose": purpose,
-                    "expires_after": expires_after,
                 },
                 upload_create_params.UploadCreateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"bearer_auth": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=Upload,
         )
@@ -588,13 +312,11 @@ class AsyncUploads(AsyncAPIResource):
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
-        timeout: float | httpx2.Timeout | None | NotGiven = not_given,
+        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> Upload:
         """Cancels the Upload.
 
         No Parts may be added after an Upload is cancelled.
-
-        Returns the Upload object with status `cancelled`.
 
         Args:
           extra_headers: Send extra headers
@@ -608,13 +330,9 @@ class AsyncUploads(AsyncAPIResource):
         if not upload_id:
             raise ValueError(f"Expected a non-empty value for `upload_id` but received {upload_id!r}")
         return await self._post(
-            path_template("/uploads/{upload_id}/cancel", upload_id=upload_id),
+            f"/uploads/{upload_id}/cancel",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"bearer_auth": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=Upload,
         )
@@ -623,14 +341,14 @@ class AsyncUploads(AsyncAPIResource):
         self,
         upload_id: str,
         *,
-        part_ids: SequenceNotStr[str],
-        md5: str | Omit = omit,
+        part_ids: List[str],
+        md5: str | NotGiven = NOT_GIVEN,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
-        timeout: float | httpx2.Timeout | None | NotGiven = not_given,
+        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> Upload:
         """
         Completes the
@@ -645,9 +363,7 @@ class AsyncUploads(AsyncAPIResource):
 
         The number of bytes uploaded upon completion must match the number of bytes
         initially specified when creating the Upload object. No Parts may be added after
-        an Upload is completed. Returns the Upload object with status `completed`,
-        including an additional `file` property containing the created usable File
-        object.
+        an Upload is completed.
 
         Args:
           part_ids: The ordered list of Part IDs.
@@ -666,7 +382,7 @@ class AsyncUploads(AsyncAPIResource):
         if not upload_id:
             raise ValueError(f"Expected a non-empty value for `upload_id` but received {upload_id!r}")
         return await self._post(
-            path_template("/uploads/{upload_id}/complete", upload_id=upload_id),
+            f"/uploads/{upload_id}/complete",
             body=await async_maybe_transform(
                 {
                     "part_ids": part_ids,
@@ -675,11 +391,7 @@ class AsyncUploads(AsyncAPIResource):
                 upload_complete_params.UploadCompleteParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"bearer_auth": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=Upload,
         )
@@ -701,7 +413,6 @@ class UploadsWithRawResponse:
 
     @cached_property
     def parts(self) -> PartsWithRawResponse:
-        """Use Uploads to upload large files in multiple parts."""
         return PartsWithRawResponse(self._uploads.parts)
 
 
@@ -721,7 +432,6 @@ class AsyncUploadsWithRawResponse:
 
     @cached_property
     def parts(self) -> AsyncPartsWithRawResponse:
-        """Use Uploads to upload large files in multiple parts."""
         return AsyncPartsWithRawResponse(self._uploads.parts)
 
 
@@ -741,7 +451,6 @@ class UploadsWithStreamingResponse:
 
     @cached_property
     def parts(self) -> PartsWithStreamingResponse:
-        """Use Uploads to upload large files in multiple parts."""
         return PartsWithStreamingResponse(self._uploads.parts)
 
 
@@ -761,5 +470,4 @@ class AsyncUploadsWithStreamingResponse:
 
     @cached_property
     def parts(self) -> AsyncPartsWithStreamingResponse:
-        """Use Uploads to upload large files in multiple parts."""
         return AsyncPartsWithStreamingResponse(self._uploads.parts)

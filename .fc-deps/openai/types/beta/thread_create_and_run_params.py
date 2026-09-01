@@ -1,14 +1,13 @@
-# File generated from our OpenAPI spec by Castiron. See CONTRIBUTING.md for details.
+# File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 from __future__ import annotations
 
-from typing import Union, Iterable, Optional
+from typing import List, Union, Iterable, Optional
 from typing_extensions import Literal, Required, TypeAlias, TypedDict
 
-from ..._types import SequenceNotStr
-from ..shared.chat_model import ChatModel
-from .assistant_tool_param import AssistantToolParam
-from ..shared_params.metadata import Metadata
+from ..chat_model import ChatModel
+from .function_tool_param import FunctionToolParam
+from .file_search_tool_param import FileSearchToolParam
 from .code_interpreter_tool_param import CodeInterpreterToolParam
 from .assistant_tool_choice_option_param import AssistantToolChoiceOptionParam
 from .threads.message_content_part_param import MessageContentPartParam
@@ -32,6 +31,7 @@ __all__ = [
     "ToolResources",
     "ToolResourcesCodeInterpreter",
     "ToolResourcesFileSearch",
+    "Tool",
     "TruncationStrategy",
     "ThreadCreateAndRunParamsNonStreaming",
     "ThreadCreateAndRunParamsStreaming",
@@ -70,14 +70,12 @@ class ThreadCreateAndRunParamsBase(TypedDict, total=False):
     `incomplete_details` for more info.
     """
 
-    metadata: Optional[Metadata]
+    metadata: Optional[object]
     """Set of 16 key-value pairs that can be attached to an object.
 
     This can be useful for storing additional information about the object in a
-    structured format, and querying for objects via API or the dashboard.
-
-    Keys are strings with a maximum length of 64 characters. Values are strings with
-    a maximum length of 512 characters.
+    structured format. Keys can be a maximum of 64 characters long and values can be
+    a maxium of 512 characters long.
     """
 
     model: Union[str, ChatModel, None]
@@ -91,23 +89,23 @@ class ThreadCreateAndRunParamsBase(TypedDict, total=False):
     parallel_tool_calls: bool
     """
     Whether to enable
-    [parallel function calling](https://platform.openai.com/docs/guides/function-calling#configuring-parallel-function-calling)
+    [parallel function calling](https://platform.openai.com/docs/guides/function-calling/parallel-function-calling)
     during tool use.
     """
 
     response_format: Optional[AssistantResponseFormatOptionParam]
     """Specifies the format that the model must output.
 
-    Compatible with [GPT-4o](https://platform.openai.com/docs/models#gpt-4o),
-    [GPT-4 Turbo](https://platform.openai.com/docs/models#gpt-4-turbo-and-gpt-4),
+    Compatible with [GPT-4o](https://platform.openai.com/docs/models/gpt-4o),
+    [GPT-4 Turbo](https://platform.openai.com/docs/models/gpt-4-turbo-and-gpt-4),
     and all GPT-3.5 Turbo models since `gpt-3.5-turbo-1106`.
 
     Setting to `{ "type": "json_schema", "json_schema": {...} }` enables Structured
-    Outputs which ensures the model will match your supplied JSON schema. Learn more
-    in the
+    Outputs which guarantees the model will match your supplied JSON schema. Learn
+    more in the
     [Structured Outputs guide](https://platform.openai.com/docs/guides/structured-outputs).
 
-    Setting to `{ "type": "json_object" }` enables JSON mode, which ensures the
+    Setting to `{ "type": "json_object" }` enables JSON mode, which guarantees the
     message the model generates is valid JSON.
 
     **Important:** when using JSON mode, you **must** also instruct the model to
@@ -127,11 +125,7 @@ class ThreadCreateAndRunParamsBase(TypedDict, total=False):
     """
 
     thread: Thread
-    """Options to create a new thread.
-
-    If no thread is provided when running a request, an empty thread will be
-    created.
-    """
+    """If no thread is provided, an empty thread will be created."""
 
     tool_choice: Optional[AssistantToolChoiceOptionParam]
     """
@@ -152,7 +146,7 @@ class ThreadCreateAndRunParamsBase(TypedDict, total=False):
     tool requires a list of vector store IDs.
     """
 
-    tools: Optional[Iterable[AssistantToolParam]]
+    tools: Optional[Iterable[Tool]]
     """Override the tools the assistant can use for this run.
 
     This is useful for modifying the behavior on a per-run basis.
@@ -170,7 +164,7 @@ class ThreadCreateAndRunParamsBase(TypedDict, total=False):
     truncation_strategy: Optional[TruncationStrategy]
     """Controls for how a thread will be truncated prior to the run.
 
-    Use this to control the initial context window of the run.
+    Use this to control the intial context window of the run.
     """
 
 
@@ -206,19 +200,17 @@ class ThreadMessage(TypedDict, total=False):
     attachments: Optional[Iterable[ThreadMessageAttachment]]
     """A list of files attached to the message, and the tools they should be added to."""
 
-    metadata: Optional[Metadata]
+    metadata: Optional[object]
     """Set of 16 key-value pairs that can be attached to an object.
 
     This can be useful for storing additional information about the object in a
-    structured format, and querying for objects via API or the dashboard.
-
-    Keys are strings with a maximum length of 64 characters. Values are strings with
-    a maximum length of 512 characters.
+    structured format. Keys can be a maximum of 64 characters long and values can be
+    a maxium of 512 characters long.
     """
 
 
 class ThreadToolResourcesCodeInterpreter(TypedDict, total=False):
-    file_ids: SequenceNotStr[str]
+    file_ids: List[str]
     """
     A list of [file](https://platform.openai.com/docs/api-reference/files) IDs made
     available to the `code_interpreter` tool. There can be a maximum of 20 files
@@ -227,11 +219,6 @@ class ThreadToolResourcesCodeInterpreter(TypedDict, total=False):
 
 
 class ThreadToolResourcesFileSearchVectorStoreChunkingStrategyAuto(TypedDict, total=False):
-    """The default strategy.
-
-    This strategy currently uses a `max_chunk_size_tokens` of `800` and `chunk_overlap_tokens` of `400`.
-    """
-
     type: Required[Literal["auto"]]
     """Always `auto`."""
 
@@ -271,27 +258,24 @@ class ThreadToolResourcesFileSearchVectorStore(TypedDict, total=False):
     If not set, will use the `auto` strategy.
     """
 
-    file_ids: SequenceNotStr[str]
+    file_ids: List[str]
     """
     A list of [file](https://platform.openai.com/docs/api-reference/files) IDs to
-    add to the vector store. For vector stores created before Nov 2025, there can be
-    a maximum of 10,000 files in a vector store. For vector stores created starting
-    in Nov 2025, the limit is 100,000,000 files.
+    add to the vector store. There can be a maximum of 10000 files in a vector
+    store.
     """
 
-    metadata: Optional[Metadata]
-    """Set of 16 key-value pairs that can be attached to an object.
+    metadata: object
+    """Set of 16 key-value pairs that can be attached to a vector store.
 
-    This can be useful for storing additional information about the object in a
-    structured format, and querying for objects via API or the dashboard.
-
-    Keys are strings with a maximum length of 64 characters. Values are strings with
-    a maximum length of 512 characters.
+    This can be useful for storing additional information about the vector store in
+    a structured format. Keys can be a maximum of 64 characters long and values can
+    be a maxium of 512 characters long.
     """
 
 
 class ThreadToolResourcesFileSearch(TypedDict, total=False):
-    vector_store_ids: SequenceNotStr[str]
+    vector_store_ids: List[str]
     """
     The
     [vector store](https://platform.openai.com/docs/api-reference/vector-stores/object)
@@ -309,36 +293,24 @@ class ThreadToolResourcesFileSearch(TypedDict, total=False):
 
 
 class ThreadToolResources(TypedDict, total=False):
-    """
-    A set of resources that are made available to the assistant's tools in this thread. The resources are specific to the type of tool. For example, the `code_interpreter` tool requires a list of file IDs, while the `file_search` tool requires a list of vector store IDs.
-    """
-
     code_interpreter: ThreadToolResourcesCodeInterpreter
 
     file_search: ThreadToolResourcesFileSearch
 
 
 class Thread(TypedDict, total=False):
-    """Options to create a new thread.
-
-    If no thread is provided when running a
-    request, an empty thread will be created.
-    """
-
     messages: Iterable[ThreadMessage]
     """
     A list of [messages](https://platform.openai.com/docs/api-reference/messages) to
     start the thread with.
     """
 
-    metadata: Optional[Metadata]
+    metadata: Optional[object]
     """Set of 16 key-value pairs that can be attached to an object.
 
     This can be useful for storing additional information about the object in a
-    structured format, and querying for objects via API or the dashboard.
-
-    Keys are strings with a maximum length of 64 characters. Values are strings with
-    a maximum length of 512 characters.
+    structured format. Keys can be a maximum of 64 characters long and values can be
+    a maxium of 512 characters long.
     """
 
     tool_resources: Optional[ThreadToolResources]
@@ -351,7 +323,7 @@ class Thread(TypedDict, total=False):
 
 
 class ToolResourcesCodeInterpreter(TypedDict, total=False):
-    file_ids: SequenceNotStr[str]
+    file_ids: List[str]
     """
     A list of [file](https://platform.openai.com/docs/api-reference/files) IDs made
     available to the `code_interpreter` tool. There can be a maximum of 20 files
@@ -360,7 +332,7 @@ class ToolResourcesCodeInterpreter(TypedDict, total=False):
 
 
 class ToolResourcesFileSearch(TypedDict, total=False):
-    vector_store_ids: SequenceNotStr[str]
+    vector_store_ids: List[str]
     """
     The ID of the
     [vector store](https://platform.openai.com/docs/api-reference/vector-stores/object)
@@ -370,22 +342,15 @@ class ToolResourcesFileSearch(TypedDict, total=False):
 
 
 class ToolResources(TypedDict, total=False):
-    """A set of resources that are used by the assistant's tools.
-
-    The resources are specific to the type of tool. For example, the `code_interpreter` tool requires a list of file IDs, while the `file_search` tool requires a list of vector store IDs.
-    """
-
     code_interpreter: ToolResourcesCodeInterpreter
 
     file_search: ToolResourcesFileSearch
 
 
+Tool: TypeAlias = Union[CodeInterpreterToolParam, FileSearchToolParam, FunctionToolParam]
+
+
 class TruncationStrategy(TypedDict, total=False):
-    """Controls for how a thread will be truncated prior to the run.
-
-    Use this to control the initial context window of the run.
-    """
-
     type: Required[Literal["auto", "last_messages"]]
     """The truncation strategy to use for the thread.
 
@@ -402,7 +367,7 @@ class TruncationStrategy(TypedDict, total=False):
     """
 
 
-class ThreadCreateAndRunParamsNonStreaming(ThreadCreateAndRunParamsBase, total=False):
+class ThreadCreateAndRunParamsNonStreaming(ThreadCreateAndRunParamsBase):
     stream: Optional[Literal[False]]
     """
     If `true`, returns a stream of events that happen during the Run as server-sent

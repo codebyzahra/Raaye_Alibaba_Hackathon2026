@@ -21,13 +21,12 @@ from typing import (
 from typing_extensions import Awaitable, ParamSpec, override, get_origin
 
 import anyio
-import httpx2
+import httpx
 import pydantic
 
 from ._types import NoneType
-from ._utils import is_given, extract_type_arg, is_annotated_type, is_type_alias_type, extract_type_var_from_base
-from ._httpx2 import http_response_types, stream_consumed_exceptions
-from ._models import BaseModel, is_basemodel, add_request_id
+from ._utils import is_given, extract_type_arg, is_annotated_type, extract_type_var_from_base
+from ._models import BaseModel, is_basemodel
 from ._constants import RAW_RESPONSE_HEADER, OVERRIDE_CAST_TO_HEADER
 from ._streaming import Stream, AsyncStream, is_stream_class_type, extract_stream_chunk_type
 from ._exceptions import OpenAIError, APIResponseValidationError
@@ -54,7 +53,7 @@ class BaseAPIResponse(Generic[R]):
     _stream_cls: type[Stream[Any]] | type[AsyncStream[Any]] | None
     _options: FinalRequestOptions
 
-    http_response: httpx2.Response
+    http_response: httpx.Response
 
     retries_taken: int
     """The number of retries made. If no retries happened this will be `0`"""
@@ -62,7 +61,7 @@ class BaseAPIResponse(Generic[R]):
     def __init__(
         self,
         *,
-        raw: httpx2.Response,
+        raw: httpx.Response,
         cast_to: type[R],
         client: BaseClient[Any, Any],
         stream: bool,
@@ -80,12 +79,12 @@ class BaseAPIResponse(Generic[R]):
         self.retries_taken = retries_taken
 
     @property
-    def headers(self) -> httpx2.Headers:
+    def headers(self) -> httpx.Headers:
         return self.http_response.headers
 
     @property
-    def http_request(self) -> httpx2.Request:
-        """Returns the HTTPX2 Request instance associated with the current response."""
+    def http_request(self) -> httpx.Request:
+        """Returns the httpx Request instance associated with the current response."""
         return self.http_response.request
 
     @property
@@ -93,7 +92,7 @@ class BaseAPIResponse(Generic[R]):
         return self.http_response.status_code
 
     @property
-    def url(self) -> httpx2.URL:
+    def url(self) -> httpx.URL:
         """Returns the URL for which the request was made."""
         return self.http_response.url
 
@@ -127,17 +126,9 @@ class BaseAPIResponse(Generic[R]):
         )
 
     def _parse(self, *, to: type[_T] | None = None) -> R | _T:
-        cast_to = to if to is not None else self._cast_to
-
-        # unwrap `TypeAlias('Name', T)` -> `T`
-        if is_type_alias_type(cast_to):
-            cast_to = cast_to.__value__  # type: ignore[unreachable]
-
         # unwrap `Annotated[T, ...]` -> `T`
-        if cast_to and is_annotated_type(cast_to):
-            cast_to = extract_type_arg(cast_to, 0)
-
-        origin = get_origin(cast_to) or cast_to
+        if to and is_annotated_type(to):
+            to = extract_type_arg(to, 0)
 
         if self._is_sse_stream:
             if to:
@@ -153,7 +144,6 @@ class BaseAPIResponse(Generic[R]):
                         ),
                         response=self.http_response,
                         client=cast(Any, self._client),
-                        options=self._options,
                     ),
                 )
 
@@ -164,7 +154,6 @@ class BaseAPIResponse(Generic[R]):
                         cast_to=extract_stream_chunk_type(self._stream_cls),
                         response=self.http_response,
                         client=cast(Any, self._client),
-                        options=self._options,
                     ),
                 )
 
@@ -175,12 +164,17 @@ class BaseAPIResponse(Generic[R]):
             return cast(
                 R,
                 stream_cls(
-                    cast_to=cast_to,
+                    cast_to=self._cast_to,
                     response=self.http_response,
                     client=cast(Any, self._client),
-                    options=self._options,
                 ),
             )
+
+        cast_to = to if to is not None else self._cast_to
+
+        # unwrap `Annotated[T, ...]` -> `T`
+        if is_annotated_type(cast_to):
+            cast_to = extract_type_arg(cast_to, 0)
 
         if cast_to is NoneType:
             return cast(R, None)
@@ -198,8 +192,7 @@ class BaseAPIResponse(Generic[R]):
         if cast_to == float:
             return cast(R, float(response.text))
 
-        if cast_to == bool:
-            return cast(R, response.text.lower() == "true")
+        origin = get_origin(cast_to) or cast_to
 
         # handle the legacy binary response case
         if inspect.isclass(cast_to) and cast_to.__name__ == "HttpxBinaryResponseContent":
@@ -208,24 +201,17 @@ class BaseAPIResponse(Generic[R]):
         if origin == APIResponse:
             raise RuntimeError("Unexpected state - cast_to is `APIResponse`")
 
-        response_types = http_response_types()
-        if inspect.isclass(origin) and issubclass(origin, response_types):
+        if inspect.isclass(origin) and issubclass(origin, httpx.Response):
             # Because of the invariance of our ResponseT TypeVar, users can subclass httpx.Response
             # and pass that class to our request functions. We cannot change the variance to be either
             # covariant or contravariant as that makes our usage of ResponseT illegal. We could construct
             # the response class ourselves but that is something that should be supported directly in httpx
             # as it would be easy to incorrectly construct the Response object due to the multitude of arguments.
-            if cast_to not in response_types:
-                raise ValueError("Subclasses of HTTP response classes cannot be passed to `cast_to`")
+            if cast_to != httpx.Response:
+                raise ValueError(f"Subclasses of httpx.Response cannot be passed to `cast_to`")
             return cast(R, response)
 
-        if (
-            inspect.isclass(
-                origin  # pyright: ignore[reportUnknownArgumentType]
-            )
-            and not issubclass(origin, BaseModel)
-            and issubclass(origin, pydantic.BaseModel)
-        ):
+        if inspect.isclass(origin) and not issubclass(origin, BaseModel) and issubclass(origin, pydantic.BaseModel):
             raise TypeError("Pydantic models must subclass our base model type, e.g. `from openai import BaseModel`")
 
         if (
@@ -236,18 +222,18 @@ class BaseAPIResponse(Generic[R]):
             and not issubclass(origin, BaseModel)
         ):
             raise RuntimeError(
-                f"Unsupported type, expected {cast_to} to be a subclass of {BaseModel}, {dict}, {list}, {Union}, {NoneType}, {str} or {httpx2.Response}."
+                f"Unsupported type, expected {cast_to} to be a subclass of {BaseModel}, {dict}, {list}, {Union}, {NoneType}, {str} or {httpx.Response}."
             )
 
         # split is required to handle cases where additional information is included
         # in the response, e.g. application/json; charset=utf-8
         content_type, *_ = response.headers.get("content-type", "*").split(";")
-        if not content_type.endswith("json"):
-            if is_basemodel(cast(type, cast_to)):
+        if content_type != "application/json":
+            if is_basemodel(cast_to):
                 try:
                     data = response.json()
                 except Exception as exc:
-                    log.debug("Could not read JSON from response data due to %s", type(exc).__name__)
+                    log.debug("Could not read JSON from response data due to %s - %s", type(exc), exc)
                 else:
                     return self._client._process_response_data(
                         data=data,
@@ -315,7 +301,7 @@ class APIResponse(BaseAPIResponse[R]):
           - `str`
           - `int`
           - `float`
-          - `httpx2.Response`
+          - `httpx.Response`
         """
         cache_key = to if to is not None else self._cast_to
         cached = self._parsed_by_type.get(cache_key)
@@ -329,17 +315,14 @@ class APIResponse(BaseAPIResponse[R]):
         if is_given(self._options.post_parser):
             parsed = self._options.post_parser(parsed)
 
-        if isinstance(parsed, BaseModel):
-            add_request_id(parsed, self.request_id)
-
         self._parsed_by_type[cache_key] = parsed
-        return cast(R, parsed)
+        return parsed
 
     def read(self) -> bytes:
         """Read and return the binary response content."""
         try:
             return self.http_response.read()
-        except stream_consumed_exceptions() as exc:
+        except httpx.StreamConsumed as exc:
             # The default error raised by httpx isn't very
             # helpful in our case so we re-raise it with
             # a different error message.
@@ -422,7 +405,7 @@ class AsyncAPIResponse(BaseAPIResponse[R]):
           - `list`
           - `Union`
           - `str`
-          - `httpx2.Response`
+          - `httpx.Response`
         """
         cache_key = to if to is not None else self._cast_to
         cached = self._parsed_by_type.get(cache_key)
@@ -436,17 +419,14 @@ class AsyncAPIResponse(BaseAPIResponse[R]):
         if is_given(self._options.post_parser):
             parsed = self._options.post_parser(parsed)
 
-        if isinstance(parsed, BaseModel):
-            add_request_id(parsed, self.request_id)
-
         self._parsed_by_type[cache_key] = parsed
-        return cast(R, parsed)
+        return parsed
 
     async def read(self) -> bytes:
         """Read and return the binary response content."""
         try:
             return await self.http_response.aread()
-        except stream_consumed_exceptions() as exc:
+        except httpx.StreamConsumed as exc:
             # the default error raised by httpx isn't very
             # helpful in our case so we re-raise it with
             # a different error message

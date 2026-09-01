@@ -1,4 +1,4 @@
-# File generated from our OpenAPI spec by Castiron. See CONTRIBUTING.md for details.
+# File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 from typing import List, Union
 from typing_extensions import Literal, Annotated, TypeAlias
@@ -17,8 +17,6 @@ __all__ = [
 
 
 class CodeInterpreterOutputLogs(BaseModel):
-    """Text output from the Code Interpreter tool call as part of a run step."""
-
     logs: str
     """The text output from the Code Interpreter tool call."""
 
@@ -47,8 +45,6 @@ CodeInterpreterOutput: TypeAlias = Annotated[
 
 
 class CodeInterpreter(BaseModel):
-    """The Code Interpreter tool call definition."""
-
     input: str
     """The input to the Code Interpreter tool call."""
 
@@ -61,8 +57,6 @@ class CodeInterpreter(BaseModel):
 
 
 class CodeInterpreterToolCall(BaseModel):
-    """Details of the Code Interpreter tool call the run step was involved in."""
-
     id: str
     """The ID of the tool call."""
 

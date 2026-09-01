@@ -5,9 +5,9 @@ from types import TracebackType
 from typing import TYPE_CHECKING, Any, Generic, TypeVar, Callable, Iterable, Iterator, cast
 from typing_extensions import Awaitable, AsyncIterable, AsyncIterator, assert_never
 
+import httpx
+
 from ..._utils import is_dict, is_list, consume_sync_iterator, consume_async_iterator
-from ..._compat import model_dump
-from ..._httpx2 import timeout_exceptions
 from ..._models import construct_type
 from ..._streaming import Stream, AsyncStream
 from ...types.beta import AssistantStreamEvent
@@ -22,10 +22,6 @@ from ...types.beta.threads import (
     MessageContentDelta,
 )
 from ...types.beta.threads.runs import RunStep, ToolCall, RunStepDelta, ToolCallDelta
-
-
-def _timeout_exceptions() -> tuple[type[Exception], ...]:
-    return (*timeout_exceptions(), asyncio.TimeoutError)
 
 
 class AssistantEventHandler:
@@ -246,7 +242,7 @@ class AssistantEventHandler:
         on_text_delta(TextDelta(value=" solution"), Text(value="The solution")),
         on_text_delta(TextDelta(value=" to"), Text(value="The solution to")),
         on_text_delta(TextDelta(value=" the"), Text(value="The solution to the")),
-        on_text_delta(TextDelta(value=" equation"), Text(value="The solution to the equation")),
+        on_text_delta(TextDelta(value=" equation"), Text(value="The solution to the equivalent")),
         """
 
     def on_text_done(self, text: Text) -> None:
@@ -410,7 +406,7 @@ class AssistantEventHandler:
                 self._emit_sse_event(event)
 
                 yield event
-        except _timeout_exceptions() as exc:
+        except (httpx.TimeoutException, asyncio.TimeoutError) as exc:
             self.on_timeout()
             self.on_exception(exc)
             raise
@@ -842,7 +838,7 @@ class AsyncAssistantEventHandler:
                 await self._emit_sse_event(event)
 
                 yield event
-        except _timeout_exceptions() as exc:
+        except (httpx.TimeoutException, asyncio.TimeoutError) as exc:
             await self.on_timeout()
             await self.on_exception(exc)
             raise
@@ -910,11 +906,11 @@ def accumulate_run_step(
             merged = accumulate_delta(
                 cast(
                     "dict[object, object]",
-                    model_dump(snapshot, exclude_unset=True, warnings=False),
+                    snapshot.model_dump(exclude_unset=True),
                 ),
                 cast(
                     "dict[object, object]",
-                    model_dump(data.delta, exclude_unset=True, warnings=False),
+                    data.delta.model_dump(exclude_unset=True),
                 ),
             )
             run_step_snapshots[snapshot.id] = cast(RunStep, construct_type(type_=RunStep, value=merged))
@@ -952,7 +948,7 @@ def accumulate_event(
                         construct_type(
                             # mypy doesn't allow Content for some reason
                             type_=cast(Any, MessageContent),
-                            value=model_dump(content_delta, exclude_unset=True, warnings=False),
+                            value=content_delta.model_dump(exclude_unset=True),
                         ),
                     ),
                 )
@@ -961,11 +957,11 @@ def accumulate_event(
                 merged = accumulate_delta(
                     cast(
                         "dict[object, object]",
-                        model_dump(block, exclude_unset=True, warnings=False),
+                        block.model_dump(exclude_unset=True),
                     ),
                     cast(
                         "dict[object, object]",
-                        model_dump(content_delta, exclude_unset=True, warnings=False),
+                        content_delta.model_dump(exclude_unset=True),
                     ),
                 )
                 current_message_snapshot.content[content_delta.index] = cast(

@@ -1,6 +1,6 @@
-fastapi>=0.111
-uvicorn>=0.30
-openai>=1.40
-python-dotenv>=1.0
-sqlalchemy>=2.0
-python-multipart>=0.0.5
+fastapi==0.115.0
+uvicorn==0.30.6
+openai==1.40.0
+python-dotenv==1.0.1
+sqlalchemy==2.0.35
+python-multipart==0.0.9
