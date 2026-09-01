@@ -4,3 +4,4 @@ openai==1.40.0
 python-dotenv==1.0.1
 sqlalchemy==2.0.35
 python-multipart==0.0.9
+click==8.1.7
