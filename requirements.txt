@@ -5,3 +5,4 @@ python-dotenv==1.0.1
 sqlalchemy==2.0.35
 python-multipart==0.0.9
 click==8.1.7
+exceptiongroup==1.2.2
