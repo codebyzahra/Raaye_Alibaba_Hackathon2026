@@ -1,0 +1,3 @@
+# Force LF line endings for the FC bootstrap script.
+# FC Custom Runtime runs on Linux — CRLF will cause "bash\r: No such file" errors.
+bootstrap text eol=lf

@@ -1,0 +1,55 @@
+# Serverless Devs configuration for Alibaba Cloud Function Compute (FC 3.0)
+# Docs: https://manual.serverless-devs.com/user-guide/aliyun/#fc3
+#
+# Deploy:
+#   s deploy
+#
+# Set credentials first:
+#   s config add --AccessKeyID <id> --AccessKeySecret <secret> -a raaye
+
+edition: 3.0.0
+name: raaye-absa
+access: default
+
+vars:
+  region: ap-southeast-1
+
+resources:
+  raaye-api:
+    component: fc3
+    props:
+      region: ${vars.region}
+      functionName: raaye-api
+      description: "Raaye — AI-powered aspect-based sentiment analysis for Daraz reviews"
+      runtime: custom.debian10
+      handler: index.handler
+      timeout: 90
+      memorySize: 512
+      diskSize: 512
+      cpu: 0.35
+      instanceConcurrency: 10
+      customRuntimeConfig:
+        command:
+          - ./bootstrap
+        port: 9000
+      code: ./
+      environmentVariables:
+        # Secrets (DASHSCOPE_API_KEY) are NOT stored here — set them in the FC console
+        # after first deploy:  Function → Configuration → Environment Variables.
+        # Without the key, the app runs in demo mode (rule-based fallback).
+        QWEN_MODEL: "qwen-plus-2025-07-28"
+        DASHSCOPE_BASE_URL: "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"
+        DEMO_MODE: "true"
+      triggers:
+        - triggerName: http-trigger
+          triggerType: http
+          triggerConfig:
+            authType: anonymous
+            methods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+      asyncInvokeConfig:
+        maxAsyncRetryAttempts: 0

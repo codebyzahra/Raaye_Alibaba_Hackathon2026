@@ -1,0 +1,53 @@
+# Files excluded from the Function Compute deployment package.
+# Keeps the zip small — only backend source + demo caches are deployed.
+
+# Frontend (served separately or bundled as static assets)
+frontend/
+
+# Data (CSV files are large; demo JSON caches ARE included)
+data/*.csv
+
+# Version control
+.git/
+.gitignore
+.fcignore
+
+# IDE & editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Python caches
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Environment & secrets
+.env
+.env.*
+
+# Build & dev artifacts
+.s/
+.serverless/
+venv/
+.venv/
+dist/
+build/
+node_modules/
+
+# Documentation (not needed at runtime)
+README.md
+DEPLOYMENT.md
+wiki/
+
+# Evaluation & benchmarking
+evaluation/
+
+# Database (created fresh at runtime)
+*.db
+
+# Misc
+*.log
+*.png
+*.jpg

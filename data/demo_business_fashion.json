@@ -1,0 +1,170 @@
+{
+  "business_id": "fashion",
+  "business_name": "Zara's Fashion Store",
+  "business_description": "Women's clothing, shoes & accessories on Daraz",
+  "demo_reviews": [
+    {
+      "review": "Dress quality bohat achi hai stitching bhi perfect hai bilkul picture jaisa aya",
+      "normalized": "dress quality bohat achi hai stitching bhi perfect hai bilkul picture jaisa aya",
+      "absa": {
+        "aspects": [
+          { "aspect": "fabric quality", "sentiment": "positive", "confidence": 0.95 },
+          { "aspect": "stitching", "sentiment": "positive", "confidence": 0.9 },
+          { "aspect": "item as described", "sentiment": "positive", "confidence": 0.9 }
+        ]
+      },
+      "actions": [
+        { "aspect": "fabric quality", "sentiment": "positive", "confidence": 0.95, "auto_reply": "" },
+        { "aspect": "stitching", "sentiment": "positive", "confidence": 0.9, "auto_reply": "" },
+        { "aspect": "item as described", "sentiment": "positive", "confidence": 0.9, "auto_reply": "" }
+      ]
+    },
+    {
+      "review": "Shoes are very nice comfortable in this price range size is perfect good seller",
+      "normalized": "shoes are very nice comfortable in this price range size is perfect good seller",
+      "absa": {
+        "aspects": [
+          { "aspect": "comfort", "sentiment": "positive", "confidence": 0.9 },
+          { "aspect": "size", "sentiment": "positive", "confidence": 0.85 },
+          { "aspect": "price", "sentiment": "positive", "confidence": 0.85 }
+        ]
+      },
+      "actions": [
+        { "aspect": "comfort", "sentiment": "positive", "confidence": 0.9, "auto_reply": "" },
+        { "aspect": "size", "sentiment": "positive", "confidence": 0.85, "auto_reply": "" },
+        { "aspect": "price", "sentiment": "positive", "confidence": 0.85, "auto_reply": "" }
+      ]
+    },
+    {
+      "review": "Seller sent the same bodysuit dress as I mentioned. Great packaging and fast delivery",
+      "normalized": "seller sent the same bodysuit dress as i mentioned great packaging and fast delivery",
+      "absa": {
+        "aspects": [
+          { "aspect": "item accuracy", "sentiment": "positive", "confidence": 0.9 },
+          { "aspect": "packaging", "sentiment": "positive", "confidence": 0.85 },
+          { "aspect": "delivery", "sentiment": "positive", "confidence": 0.9 }
+        ]
+      },
+      "actions": [
+        { "aspect": "item accuracy", "sentiment": "positive", "confidence": 0.9, "auto_reply": "" },
+        { "aspect": "packaging", "sentiment": "positive", "confidence": 0.85, "auto_reply": "" },
+        { "aspect": "delivery", "sentiment": "positive", "confidence": 0.9, "auto_reply": "" }
+      ]
+    },
+    {
+      "review": "shirt wesi hii thi jese picture main thi magar kapre ki quality kam thi price kee hissab see",
+      "normalized": "shirt wesi hi thi jese picture mein thi magar kapre ki quality kam thi price ki hisab se",
+      "absa": {
+        "aspects": [
+          { "aspect": "item as described", "sentiment": "positive", "confidence": 0.8 },
+          { "aspect": "fabric quality", "sentiment": "negative", "confidence": 0.85 },
+          { "aspect": "price", "sentiment": "negative", "confidence": 0.8 }
+        ]
+      },
+      "actions": [
+        { "aspect": "item as described", "sentiment": "positive", "confidence": 0.8, "auto_reply": "" },
+        { "aspect": "fabric quality", "sentiment": "negative", "confidence": 0.85, "auto_reply": "Kapre ki quality ki complaint ke liye afsos hai — hum samajhte hain ke price ke hisab se quality expectations poori nahi hui. Hum supplier ko feedback de rahe hain aur aapke liye better quality ka option suggest karna chahte hain." },
+        { "aspect": "price", "sentiment": "negative", "confidence": 0.8, "auto_reply": "Price ke hisab se quality nahi mili — ye feedback hum seriously le rahe hain. Hum apne products ki quality improve karne par kaam kar rahe hain. Aapka shukriya honest review ke liye." }
+      ]
+    },
+    {
+      "review": "Size bilkul galat aya hai ordered L but received S waste of money",
+      "normalized": "size bilkul galat aya hai ordered l but received s waste of money",
+      "absa": {
+        "aspects": [
+          { "aspect": "size", "sentiment": "negative", "confidence": 0.95 },
+          { "aspect": "item accuracy", "sentiment": "negative", "confidence": 0.95 }
+        ]
+      },
+      "actions": [
+        { "aspect": "size", "sentiment": "negative", "confidence": 0.95, "auto_reply": "Size galat bhejne ke liye hum dil se maafi chahte hain — ye hamari packing team ki ghalti hai. Aapka correct size (L) jald se jald bhejenge aur galat item wapis lein ge. Please DM karein apna order number." },
+        { "aspect": "item accuracy", "sentiment": "negative", "confidence": 0.95, "auto_reply": "Wrong size bhejna bilkul acceptable nahi — hum is issue ko seriously le rahe hain. Aapko free replacement with correct size priority shipping se bhejenge. Bohat sharminda hain is ghalti ke liye." }
+      ]
+    },
+    {
+      "review": "Fabric quality is not good and elastic quality is loose but in this price its ok",
+      "normalized": "fabric quality is not good and elastic quality is loose but in this price its ok",
+      "absa": {
+        "aspects": [
+          { "aspect": "fabric quality", "sentiment": "negative", "confidence": 0.8 },
+          { "aspect": "elastic quality", "sentiment": "negative", "confidence": 0.8 },
+          { "aspect": "price", "sentiment": "positive", "confidence": 0.7 }
+        ]
+      },
+      "actions": [
+        { "aspect": "fabric quality", "sentiment": "negative", "confidence": 0.8, "auto_reply": "Fabric quality ki feedback humne note ki hai — hum better material use karne par kaam kar rahe hain. Agli collection mein zaroor improvement dikhe ga. Aapki honest feedback ka shukriya!" },
+        { "aspect": "elastic quality", "sentiment": "negative", "confidence": 0.8, "auto_reply": "Elastic loose hone ki complaint ke liye sorry — ye quality control mein kami hai. Hum is issue ko fix karenge. Agar aap exchange chahte hain to please DM karein." },
+        { "aspect": "price", "sentiment": "positive", "confidence": 0.7, "auto_reply": "" }
+      ]
+    },
+    {
+      "review": "bohat ajeeb designs hain return bhi nhi ho rhi koi achay colour nhi hain white colour bhi nhi chalta",
+      "normalized": "bohat ajeeb designs hai return bhi nahi ho rahi koi achay color nahi hai white color bhi nahi chalta",
+      "absa": {
+        "aspects": [
+          { "aspect": "design", "sentiment": "negative", "confidence": 0.9 },
+          { "aspect": "return policy", "sentiment": "negative", "confidence": 0.85 },
+          { "aspect": "color", "sentiment": "negative", "confidence": 0.85 }
+        ]
+      },
+      "actions": [
+        { "aspect": "design", "sentiment": "negative", "confidence": 0.9, "auto_reply": "Design pasand na aane ka afsos hai — hum samajhte hain ke expectations poori nahi hui. Hum apni design range expand kar rahe hain taake better options mil saken. Aapki feedback zaroor note ki hai." },
+        { "aspect": "return policy", "sentiment": "negative", "confidence": 0.85, "auto_reply": "Return na hona frustrating hai — hum is policy ko review kar rahe hain. Aapke liye exception bana kar exchange ya refund process karna chahte hain. Please DM karein order details ke saath." },
+        { "aspect": "color", "sentiment": "negative", "confidence": 0.85, "auto_reply": "Color options ki kami ke baare mein feedback shukriya — hum nayi collection mein zyada color variety laa rahe hain, including white. Agli baar zaroor better options milein ge." }
+      ]
+    },
+    {
+      "review": "Dress design nice hai but fitting bilkul nahi hai bohat tight hai exchange bhi mushkil",
+      "normalized": "dress design nice hai but fitting bilkul nahi hai bohat tight hai exchange bhi mushkil",
+      "absa": {
+        "aspects": [
+          { "aspect": "design", "sentiment": "positive", "confidence": 0.8 },
+          { "aspect": "fitting", "sentiment": "negative", "confidence": 0.9 },
+          { "aspect": "exchange policy", "sentiment": "negative", "confidence": 0.75 }
+        ]
+      },
+      "actions": [
+        { "aspect": "design", "sentiment": "positive", "confidence": 0.8, "auto_reply": "" },
+        { "aspect": "fitting", "sentiment": "negative", "confidence": 0.9, "auto_reply": "Fitting issue ke liye afsos hai — tight fit disappointing ho sakta hai. Hum size chart ko better descriptions ke saath update kar rahe hain. Aapke liye ek size up exchange karna chahte hain, please DM karein." },
+        { "aspect": "exchange policy", "sentiment": "negative", "confidence": 0.75, "auto_reply": "Exchange mushkil hone ka afsos hai — hum apna exchange process simplify kar rahe hain taake customers ko pareshani na ho. Aapka exchange priority pe process karenge." }
+      ]
+    },
+    {
+      "review": "Good quality unstitched suit delivery was fast but color thora different hai picture se",
+      "normalized": "good quality unstitched suit delivery was fast but color thora different hai picture se",
+      "absa": {
+        "aspects": [
+          { "aspect": "fabric quality", "sentiment": "positive", "confidence": 0.85 },
+          { "aspect": "delivery", "sentiment": "positive", "confidence": 0.85 },
+          { "aspect": "color accuracy", "sentiment": "negative", "confidence": 0.8 }
+        ]
+      },
+      "actions": [
+        { "aspect": "fabric quality", "sentiment": "positive", "confidence": 0.85, "auto_reply": "" },
+        { "aspect": "delivery", "sentiment": "positive", "confidence": 0.85, "auto_reply": "" },
+        { "aspect": "color accuracy", "sentiment": "negative", "confidence": 0.8, "auto_reply": "Color picture se different hone ka afsos hai — screen settings ki wajah se kabhi kabhi color vary ho sakta hai. Hum product photos ko better lighting mein update karenge. Agar aap exchange chahte hain to please DM karein." }
+      ]
+    },
+    {
+      "review": "Shoes ka design acha hai but sole bohat hard hai aur walking mein uncomfortable",
+      "normalized": "shoes ka design acha hai but sole bohat hard hai aur walking mein uncomfortable",
+      "absa": {
+        "aspects": [
+          { "aspect": "design", "sentiment": "positive", "confidence": 0.8 },
+          { "aspect": "sole comfort", "sentiment": "negative", "confidence": 0.85 },
+          { "aspect": "comfort", "sentiment": "negative", "confidence": 0.85 }
+        ]
+      },
+      "actions": [
+        { "aspect": "design", "sentiment": "positive", "confidence": 0.8, "auto_reply": "" },
+        { "aspect": "sole comfort", "sentiment": "negative", "confidence": 0.85, "auto_reply": "Sole hard hone ki feedback ke liye shukriya — walking mein uncomfortable hona serious issue hai. Hum supplier ko feedback de chuke hain aur softer sole options laa rahe hain. Aapko exchange offer karna chahte hain." },
+        { "aspect": "comfort", "sentiment": "negative", "confidence": 0.85, "auto_reply": "Comfort issue ke liye afsos hai — shoes mein comfort sab se important hai. Hum nayi collection mein cushioned insoles add kar rahe hain. Aapka feedback humare liye bohat valuable hai." }
+      ]
+    }
+  ],
+  "executive_summary": "Zara's Fashion Store has strong design appeal with customers liking the visual style, but critical pain points are sizing accuracy and fabric quality. Of 10 reviews, 3 are positive, 2 negative, and 5 mixed. The most urgent issue is wrong size delivery (ordered L, received S) — indicating a warehouse packing error. Fabric quality complaints and poor elastic are recurring themes. Return/exchange difficulty amplifies customer frustration. Recommend: (1) warehouse size verification process, (2) fabric supplier quality audit, (3) streamlined exchange policy.",
+  "meta": {
+    "count": 10,
+    "generated_with": "absa_engine (live Qwen) + action_engine"
+  }
+}

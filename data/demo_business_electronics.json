@@ -1,0 +1,162 @@
+{
+  "business_id": "electronics",
+  "business_name": "TechHub Electronics",
+  "business_description": "Gadgets, audio & accessories store on Daraz",
+  "demo_reviews": [
+    {
+      "review": "Bohat zabardast earbuds hain sound quality kamaal ki hai bass bhi bohat achi hai",
+      "normalized": "bohat zabardast earbuds hai sound quality kamaal ki hai bass bhi bohat achi hai",
+      "absa": {
+        "aspects": [
+          { "aspect": "sound quality", "sentiment": "positive", "confidence": 0.95 },
+          { "aspect": "bass", "sentiment": "positive", "confidence": 0.9 }
+        ]
+      },
+      "actions": [
+        { "aspect": "sound quality", "sentiment": "positive", "confidence": 0.95, "auto_reply": "" },
+        { "aspect": "bass", "sentiment": "positive", "confidence": 0.9, "auto_reply": "" }
+      ]
+    },
+    {
+      "review": "Bluetooth headphones are amazing, original product with perfect sound and long battery life",
+      "normalized": "bluetooth headphones are amazing original product with perfect sound and long battery life",
+      "absa": {
+        "aspects": [
+          { "aspect": "authenticity", "sentiment": "positive", "confidence": 0.9 },
+          { "aspect": "sound quality", "sentiment": "positive", "confidence": 0.95 },
+          { "aspect": "battery life", "sentiment": "positive", "confidence": 0.9 }
+        ]
+      },
+      "actions": [
+        { "aspect": "authenticity", "sentiment": "positive", "confidence": 0.9, "auto_reply": "" },
+        { "aspect": "sound quality", "sentiment": "positive", "confidence": 0.95, "auto_reply": "" },
+        { "aspect": "battery life", "sentiment": "positive", "confidence": 0.9, "auto_reply": "" }
+      ]
+    },
+    {
+      "review": "Charger works perfectly fast charging bhi hai and build quality is solid",
+      "normalized": "charger works perfectly fast charging bhi hai and build quality is solid",
+      "absa": {
+        "aspects": [
+          { "aspect": "functionality", "sentiment": "positive", "confidence": 0.9 },
+          { "aspect": "charging speed", "sentiment": "positive", "confidence": 0.85 },
+          { "aspect": "build quality", "sentiment": "positive", "confidence": 0.85 }
+        ]
+      },
+      "actions": [
+        { "aspect": "functionality", "sentiment": "positive", "confidence": 0.9, "auto_reply": "" },
+        { "aspect": "charging speed", "sentiment": "positive", "confidence": 0.85, "auto_reply": "" },
+        { "aspect": "build quality", "sentiment": "positive", "confidence": 0.85, "auto_reply": "" }
+      ]
+    },
+    {
+      "review": "ek earphone to chal he nahi raha hai or talktime just 2 mints hai full charge karnay k badh bhi",
+      "normalized": "ek earphone to chal he nahi raha hai or talktime just 2 minutes hai full charge karne ke baad bhi",
+      "absa": {
+        "aspects": [
+          { "aspect": "functionality", "sentiment": "negative", "confidence": 0.95 },
+          { "aspect": "battery timing", "sentiment": "negative", "confidence": 0.95 }
+        ]
+      },
+      "actions": [
+        { "aspect": "functionality", "sentiment": "negative", "confidence": 0.95, "auto_reply": "So sorry ke aapka ek earphone kaam nahi kar raha — ye bilkul acceptable nahi. Hum aapko jald se jald replacement bhejenge, please DM karein apna order number ke saath. Aapki pareshani ke liye maafi chahte hain." },
+        { "aspect": "battery timing", "sentiment": "negative", "confidence": 0.95, "auto_reply": "Battery timing ki issue ke liye bohat afsos hai — full charge ke baad sirf 2 minute talk time bilkul normal nahi. Hum is product ko quality check ke liye wapis lein ge, aapka replacement ya refund jald process hoga." }
+      ]
+    },
+    {
+      "review": "cheep plastic broken down after 1 month. sound quality is also very bad",
+      "normalized": "cheap plastic broken down after 1 month sound quality is also very bad",
+      "absa": {
+        "aspects": [
+          { "aspect": "build quality", "sentiment": "negative", "confidence": 0.95 },
+          { "aspect": "durability", "sentiment": "negative", "confidence": 0.9 },
+          { "aspect": "sound quality", "sentiment": "negative", "confidence": 0.9 }
+        ]
+      },
+      "actions": [
+        { "aspect": "build quality", "sentiment": "negative", "confidence": 0.95, "auto_reply": "Humari taraf se maafi chahte hain — plastic quality ki wajah se aapko takleef hui ye bilkul unacceptable hai. Hum supplier ko feedback de chuke hain aur aapke liye replacement arrange kar rahe hain. Please contact us." },
+        { "aspect": "durability", "sentiment": "negative", "confidence": 0.9, "auto_reply": "1 month mein tootna bohat disappointing hai — hum samajhte hain aapki frustration. Aapka item replace ya refund kar diya jaye ga, please DM karein taake hum jald process shuroo kar saken." },
+        { "aspect": "sound quality", "sentiment": "negative", "confidence": 0.9, "auto_reply": "Sound quality ki complaint humne note kar li hai — ye product hamare standards par poora nahi utra. Aapko better quality ka replacement offer karna chahte hain. Shukriya aapki honest feedback ke liye." }
+      ]
+    },
+    {
+      "review": "Worst quality even after charging for 1hr become power offed after 3 4 seconds very disappointed",
+      "normalized": "worst quality even after charging for 1 hour become power off after 3 4 seconds very disappointed",
+      "absa": {
+        "aspects": [
+          { "aspect": "battery life", "sentiment": "negative", "confidence": 0.95 },
+          { "aspect": "quality", "sentiment": "negative", "confidence": 0.95 }
+        ]
+      },
+      "actions": [
+        { "aspect": "battery life", "sentiment": "negative", "confidence": 0.95, "auto_reply": "Battery ka ye issue bohat serious hai — 1 ghante charge ke baad sirf 3-4 seconds chalna bilkul unacceptable hai. Hum aapko naya unit bhejenge with proper quality check. Please share your order details." },
+        { "aspect": "quality", "sentiment": "negative", "confidence": 0.95, "auto_reply": "We're really sorry aapko itna bura experience hua — ye product hamare quality standards se bohat neeche hai. Aapka full refund ya replacement jald se jald process karenge. Apka shukriya feedback dene ke liye." }
+      ]
+    },
+    {
+      "review": "Speakers thek hain but jab call krty hain to dosry k pass shor jata ha audio songs k liy to thek hain but call k liy trusted ni hain",
+      "normalized": "speakers thek hai but jab call karte hai to dusre ke paas shor jata hai audio songs ke liye to thek hai but call ke liye trusted nahi hai",
+      "absa": {
+        "aspects": [
+          { "aspect": "speaker quality", "sentiment": "positive", "confidence": 0.75 },
+          { "aspect": "call quality", "sentiment": "negative", "confidence": 0.85 }
+        ]
+      },
+      "actions": [
+        { "aspect": "speaker quality", "sentiment": "positive", "confidence": 0.75, "auto_reply": "" },
+        { "aspect": "call quality", "sentiment": "negative", "confidence": 0.85, "auto_reply": "Call quality ki issue ke liye afsos hai — background noise jana mic ki problem ho sakti hai. Hum aapko better model suggest kar sakte hain ya phir exchange offer de sakte hain. Please DM karein." }
+      ]
+    },
+    {
+      "review": "product acha hai but packaging bilkul nahi achi thi aur delivery late hui",
+      "normalized": "product acha hai but packaging bilkul nahi achi thi aur delivery late hui",
+      "absa": {
+        "aspects": [
+          { "aspect": "product quality", "sentiment": "positive", "confidence": 0.8 },
+          { "aspect": "packaging", "sentiment": "negative", "confidence": 0.85 },
+          { "aspect": "delivery", "sentiment": "negative", "confidence": 0.8 }
+        ]
+      },
+      "actions": [
+        { "aspect": "product quality", "sentiment": "positive", "confidence": 0.8, "auto_reply": "" },
+        { "aspect": "packaging", "sentiment": "negative", "confidence": 0.85, "auto_reply": "Sorry for the weak packaging — electronics ko proper protection ke saath bhejna zaroori hai. Hum apni packing process improve kar rahe hain. Agli baar zaroor better experience mile ga, shukriya!" },
+        { "aspect": "delivery", "sentiment": "negative", "confidence": 0.8, "auto_reply": "Late delivery ke liye maafi chahte hain — hum courier partner ke saath is issue ko address kar rahe hain. Umeed hai agli baar timely delivery hogi. Aapka feedback important hai!" }
+      ]
+    },
+    {
+      "review": "sound quality bohat achi hai bass bhi perfect hai lekin wire bohat jaldi toot gayi",
+      "normalized": "sound quality bohat achi hai bass bhi perfect hai lekin wire bohat jaldi toot gayi",
+      "absa": {
+        "aspects": [
+          { "aspect": "sound quality", "sentiment": "positive", "confidence": 0.9 },
+          { "aspect": "bass", "sentiment": "positive", "confidence": 0.9 },
+          { "aspect": "durability", "sentiment": "negative", "confidence": 0.85 }
+        ]
+      },
+      "actions": [
+        { "aspect": "sound quality", "sentiment": "positive", "confidence": 0.9, "auto_reply": "" },
+        { "aspect": "bass", "sentiment": "positive", "confidence": 0.9, "auto_reply": "" },
+        { "aspect": "durability", "sentiment": "negative", "confidence": 0.85, "auto_reply": "Wire jaldi tootne ki complaint humne seriously note ki hai — ye durability issue fix karne ke liye hum supplier ke saath kaam kar rahe hain. Aapko free replacement bhejna chahte hain, please DM karein." }
+      ]
+    },
+    {
+      "review": "ye achi earbuds h quality bi theek but price zaida h is price mein better options hain",
+      "normalized": "ye achi earbuds hai quality bi theek but price zyada hai is price mein better options hai",
+      "absa": {
+        "aspects": [
+          { "aspect": "product quality", "sentiment": "positive", "confidence": 0.75 },
+          { "aspect": "price", "sentiment": "negative", "confidence": 0.85 }
+        ]
+      },
+      "actions": [
+        { "aspect": "product quality", "sentiment": "positive", "confidence": 0.75, "auto_reply": "" },
+        { "aspect": "price", "sentiment": "negative", "confidence": 0.85, "auto_reply": "Price zyada lagnay ke liye afsos hai — hum apni pricing review kar rahe hain taake better value offer kar saken. Aapki feedback humare liye important hai. Next sale mein zaroor check karein, discount mile ga!" }
+      ]
+    }
+  ],
+  "executive_summary": "TechHub Electronics shows strong audio performance with customers praising sound quality and bass, but critical issues center on battery life and durability. Of 10 reviews, 3 are positive, 3 negative, and 4 mixed. The most urgent complaint involves earphones failing after full charge (2-min talk time) — indicating a potential battery defect batch. Wire durability and cheap plastic are recurring concerns. Recommend immediate quality audit of earbuds supply chain and improved packaging for fragile electronics.",
+  "meta": {
+    "count": 10,
+    "generated_with": "absa_engine (live Qwen) + action_engine"
+  }
+}
