@@ -1,8 +1,8 @@
 # Deploying Raaye to Alibaba Cloud Function Compute
 
-This guide deploys the Raaye FastAPI backend to **Alibaba Cloud Function Compute (FC 3.0)** using a Custom Runtime. The frontend is served separately (static build or local dev).
+This guide deploys the Raaye FastAPI backend to **Alibaba Cloud Function Compute (FC 3.0)** using a Custom Runtime (`custom.debian11`, Python 3.9). The frontend is deployed separately on **Vercel**.
 
-> **Scope:** Function Compute only. No ECS, no RDS. SQLite is created in-function ephemeral storage — fine for demos, not for persistent production data.
+> **Scope:** Function Compute + Vercel. No ECS, no RDS. SQLite is created in-function ephemeral storage — fine for demos, not for persistent production data.
 
 ---
 
@@ -11,14 +11,17 @@ This guide deploys the Raaye FastAPI backend to **Alibaba Cloud Function Compute
 | Tool | Install | Purpose |
 |------|---------|---------|
 | **Serverless Devs CLI** (`s`) | `npm install -g @serverless-devs/s` | Deploy & manage FC functions |
+| **Vercel CLI** | `npm install -g vercel` | Deploy frontend |
 | **Alibaba Cloud account** | [alibabacloud.com](https://www.alibabacloud.com) | Cloud provider |
 | **DashScope API key** | [Model Studio console](https://www.alibabacloud.com/product/model-studio) | Qwen model access |
-| **Node.js ≥ 18** | [nodejs.org](https://nodejs.org) | Required by `s` CLI |
+| **Node.js ≥ 18** | [nodejs.org](https://nodejs.org) | Required by `s` and `vercel` CLI |
+| **Python 3.11** | [python.org](https://python.org) | For pre-installing FC dependencies |
 
-Verify the CLI is installed:
+Verify the CLIs are installed:
 
 ```bash
 s --version
+vercel --version
 ```
 
 ---
@@ -42,19 +45,34 @@ s config get
 
 ---
 
-## 2. Deploy
+## 2. Pre-install dependencies for FC
+
+The FC sandbox is **read-only** — pip cannot install packages at runtime. Dependencies must be pre-installed locally into `.fc-deps/` targeting Python 3.9 on Linux:
+
+```bash
+pip install --no-user --target .fc-deps -r requirements.txt \
+  --python-version 3.9 --platform manylinux2014_x86_64 --only-binary=:all:
+```
+
+> **Note:** If pip complains about missing pure-Python transitive dependencies (e.g. `exceptiongroup`), add them explicitly to `requirements.txt` and re-run.
+
+---
+
+## 3. Deploy backend
 
 From the project root:
 
 ```bash
-s deploy
+s deploy -y
 ```
 
 This will:
 1. Package the code (respecting `.fcignore` to exclude frontend, CSVs, docs, etc.)
 2. Upload to FC in the configured region (`ap-southeast-1` by default)
-3. Create the function `raaye-api` with Custom Runtime
+3. Create/update the function `raaye-api` with Custom Runtime `custom.debian11`
 4. Set up the HTTP trigger
+
+> **Important:** All environment variables are configured in `s.yaml`. Do **not** change settings in the FC console — `s deploy` will overwrite them back to what's in `s.yaml`.
 
 ### Change the region
 
@@ -68,33 +86,24 @@ Available regions: `ap-southeast-1` (Singapore), `cn-shanghai`, `cn-hangzhou`, `
 
 ---
 
-## 3. Set environment variables (secrets)
+## 4. Environment variables
 
-Secrets like `DASHSCOPE_API_KEY` are **not stored in `s.yaml`** — set them manually in the Function Compute console after the first deploy.
+All variables are set in `s.yaml` and deployed automatically:
 
-### Via the FC console (recommended)
+| Variable | Value | Description |
+|----------|-------|-------------|
+| `DASHSCOPE_API_KEY` | `sk-...` | Alibaba Cloud Model Studio API key |
+| `QWEN_MODEL` | `qwen-plus-2025-07-28` | Qwen model identifier |
+| `DASHSCOPE_BASE_URL` | `https://dashscope-intl.aliyuncs.com/compatible-mode/v1` | DashScope OpenAI-compatible endpoint |
+| `DEMO_MODE` | `false` | `false` = live Qwen analysis; `true` = cached demo results |
 
-1. Open the [Function Compute console](https://fcnext.console.aliyun.com)
-2. Select your region (e.g. `ap-southeast-1`)
-3. Click the **`raaye-api`** function
-4. Go to **Configuration → Environment Variables**
-5. Click **Edit** and add:
+> **Without `DASHSCOPE_API_KEY`**, the app falls back to the rule-based keyword analyzer. Demo businesses (cached JSON) work regardless of this setting.
 
-   | Key | Value |
-   |-----|-------|
-   | `DASHSCOPE_API_KEY` | `sk-your-actual-key-here` |
-
-6. Click **Save**
-
-The function restarts automatically with the new variable.
-
-> **Without `DASHSCOPE_API_KEY`**, the app works fine in demo mode — it serves cached reviews and falls back to the rule-based analyzer for live requests. Add the key only when you need live Qwen inference.
-
-Get your API key from [Alibaba Cloud Model Studio](https://www.alibabacloud.com/product/model-studio).
+To change any variable, edit `s.yaml` and run `s deploy -y`.
 
 ---
 
-## 4. Verify
+## 5. Verify
 
 After a successful deploy, the CLI prints the function's HTTP trigger URL:
 
@@ -106,7 +115,7 @@ After a successful deploy, the CLI prints the function's HTTP trigger URL:
 Test it:
 
 ```bash
-# Health check (should return FastAPI docs or 404 for root)
+# API docs (Swagger UI)
 curl https://raaye-api-xxxx.ap-southeast-1.fcapp.run/docs
 
 # List demo businesses
@@ -114,50 +123,32 @@ curl https://raaye-api-xxxx.ap-southeast-1.fcapp.run/api/demo/businesses
 
 # Load a demo business
 curl -X POST https://raaye-api-xxxx.ap-southeast-1.fcapp.run/api/demo/electronics
+
+# Live analysis
+curl -X POST https://raaye-api-xxxx.ap-southeast-1.fcapp.run/analyze \
+  -H "Content-Type: application/json" \
+  -d '{"reviews": ["bohat acha product hai"]}'
 ```
 
 ---
 
-## 5. Connect the frontend
+## 6. Deploy frontend to Vercel
 
-Update the frontend's API base URL to point to your FC function.
-
-**Option A — Vite proxy (development):**
-
-In `frontend/vite.config.js`, update the proxy target:
+1. Update `API_BASE` in `frontend/src/App.jsx` to your FC URL:
 
 ```js
-proxy: {
-  '/api': 'https://raaye-api-xxxx.ap-southeast-1.fcapp.run',
-  '/analyze': 'https://raaye-api-xxxx.ap-southeast-1.fcapp.run',
-}
+const API_BASE = 'https://raaye-api-xxxx.ap-southeast-1.fcapp.run'
 ```
 
-**Option B — Static build:**
+2. Deploy:
 
-Build the frontend and serve from any static host (GitHub Pages, Vercel, OSS). Set `API_BASE` in `App.jsx` to your FC URL before building.
+```bash
+cd frontend
+vercel login        # one-time
+vercel --yes --prod
+```
 
----
-
-## Environment variables reference
-
-### Set in `s.yaml` (non-secret, safe to commit)
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `QWEN_MODEL` | `qwen-plus-2025-07-28` | Qwen model identifier |
-| `DASHSCOPE_BASE_URL` | `https://dashscope-intl.aliyuncs.com/compatible-mode/v1` | DashScope OpenAI-compatible endpoint |
-| `DEMO_MODE` | `true` | Serve cached demo reviews instead of calling Qwen |
-
-### Set in the FC console (secrets, never committed)
-
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `DASHSCOPE_API_KEY` | No* | Alibaba Cloud Model Studio API key. Without it, the app uses demo caches and the rule-based fallback. |
-
-\* Required only for live Qwen inference. Demo mode works without it.
-
-To update non-secret variables, edit `s.yaml` and redeploy with `s deploy`. For secrets, use the FC console as described in Step 3.
+Vercel will build the React app and give you a live URL like `https://your-app.vercel.app`.
 
 ---
 
@@ -166,7 +157,12 @@ To update non-secret variables, edit `s.yaml` and redeploy with `s deploy`. For 
 After making code changes:
 
 ```bash
-s deploy
+# Rebuild deps if requirements.txt changed
+pip install --no-user --target .fc-deps -r requirements.txt \
+  --python-version 3.9 --platform manylinux2014_x86_64 --only-binary=:all:
+
+# Redeploy
+s deploy -y
 ```
 
 FC creates a new version and routes traffic to it. No downtime.
@@ -201,11 +197,13 @@ s remove
 
 | Issue | Fix |
 |-------|-----|
-| `bootstrap: Permission denied` | Ensure the file has execute permission: `chmod +x bootstrap` (commit via Git on Linux/Mac, or use `git update-index --chmod=+x bootstrap`) |
-| Cold-start timeout | First invocation installs pip dependencies (~10-20s). Increase `timeout` in `s.yaml` if needed |
-| Qwen calls fail / fallback active | Set `DASHSCOPE_API_KEY` in the FC console (Function → Configuration → Environment Variables). Without it, the app uses demo caches and the rule-based fallback. |
-| SQLite errors | FC ephemeral storage is writable at `/code` and `/tmp`. SQLite creates `raaye.db` in `/code` — this is reset on cold starts (expected for demo mode) |
+| `bootstrap: Permission denied` | Ensure the file has execute permission: `git update-index --chmod=+x bootstrap` |
+| `ImportError: cannot import name 'Literal' from 'typing'` | Runtime reverted to Python 3.7 — redeploy to restore `custom.debian11` |
+| `ModuleNotFoundError: pydantic_core._pydantic_core` | Rebuild `.fc-deps/` with `--python-version 3.9 --platform manylinux2014_x86_64` |
+| Demo businesses not showing | Ensure demo cache JSON files exist in `data/` and caches load at startup |
+| Qwen calls fail / fallback active | Verify `DASHSCOPE_API_KEY` is set in `s.yaml` and redeploy |
 | Function too large | Check `.fcignore` is excluding frontend/, evaluation/, and CSV files |
+| Settings revert after console edit | Never edit in FC console — always edit `s.yaml` and run `s deploy -y` |
 
 ---
 

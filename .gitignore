@@ -37,3 +37,6 @@ node_modules/
 # Serverless Devs / deployment artifacts
 .s/
 .serverless/
+
+# FC pre-installed dependencies (build artifact, regenerated before each deploy)
+.fc-deps/

@@ -33,28 +33,29 @@ DEMO_MODE = os.getenv("DEMO_MODE", "false").strip().lower() in ("true", "1", "ye
 _DEMO_CACHES: dict[str, dict] = {}       # business_id → full cache dict
 _DEMO_REVIEWS: dict[str, dict] = {}      # normalized_text → absa result (merged)
 
-if DEMO_MODE:
-    _data_dir = Path(__file__).parent / "data"
-    for _cache_file in sorted(_data_dir.glob("*.json")):
-        try:
-            with open(_cache_file, encoding="utf-8") as _f:
-                _data = json.load(_f)
-            if "demo_reviews" not in _data:
-                continue
-            _bid = _data.get("business_id", _cache_file.stem)
-            _DEMO_CACHES[_bid] = _data
-            for _entry in _data["demo_reviews"]:
-                _DEMO_REVIEWS[_entry["normalized"]] = _entry["absa"]
-            logger.info(
-                "DEMO_MODE — loaded '%s' (%d reviews) from %s",
-                _bid, len(_data["demo_reviews"]), _cache_file.name,
-            )
-        except Exception as exc:
-            logger.error("Failed to load demo cache %s: %s", _cache_file.name, exc)
-    logger.info(
-        "DEMO_MODE summary: %d business(es), %d total cached reviews",
-        len(_DEMO_CACHES), len(_DEMO_REVIEWS),
-    )
+# Always load demo caches so the business list is visible.
+# The POST /api/demo/{id} endpoint still requires DEMO_MODE=true.
+_data_dir = Path(__file__).parent / "data"
+for _cache_file in sorted(_data_dir.glob("*.json")):
+    try:
+        with open(_cache_file, encoding="utf-8") as _f:
+            _data = json.load(_f)
+        if "demo_reviews" not in _data:
+            continue
+        _bid = _data.get("business_id", _cache_file.stem)
+        _DEMO_CACHES[_bid] = _data
+        for _entry in _data["demo_reviews"]:
+            _DEMO_REVIEWS[_entry["normalized"]] = _entry["absa"]
+        logger.info(
+            "Loaded demo cache '%s' (%d reviews) from %s",
+            _bid, len(_data["demo_reviews"]), _cache_file.name,
+        )
+    except Exception as exc:
+        logger.error("Failed to load demo cache %s: %s", _cache_file.name, exc)
+logger.info(
+    "Demo summary: %d business(es), %d total cached reviews",
+    len(_DEMO_CACHES), len(_DEMO_REVIEWS),
+)
 
 
 # --- app setup -----------------------------------------------------------
@@ -173,8 +174,6 @@ def load_demo(
     db: Session = Depends(get_db),
 ) -> dict:
     """Load cached demo reviews into the database for a specific business."""
-    if not DEMO_MODE:
-        raise HTTPException(400, "Demo mode is not enabled")
     cache = _DEMO_CACHES.get(business_id)
     if not cache:
         raise HTTPException(404, f"Demo business '{business_id}' not found")

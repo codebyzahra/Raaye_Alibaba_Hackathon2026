@@ -6,9 +6,11 @@
 
 ## Live Demo
 
-> **Coming soon** — the live deployment URL will be published here once hosted on Alibaba Cloud.
+- **Frontend:** [https://frontend-khaki-chi-97.vercel.app](https://frontend-khaki-chi-97.vercel.app)
+- **Backend API:** [https://raaye-api-qtzkqnhirs.ap-southeast-1.fcapp.run](https://raaye-api-qtzkqnhirs.ap-southeast-1.fcapp.run)
+- **API Docs (Swagger):** [https://raaye-api-qtzkqnhirs.ap-southeast-1.fcapp.run/docs](https://raaye-api-qtzkqnhirs.ap-southeast-1.fcapp.run/docs)
 
-For now, run locally with `DEMO_MODE=true` (see [How to Run](#how-to-run)) to explore the dashboard with pre-cached results from three demo businesses.
+The frontend is hosted on **Vercel** and the backend runs on **Alibaba Cloud Function Compute** (serverless). Try the three demo businesses (TechHub Electronics, Zara's Fashion Store, General Store Demo) for instant cached results, or upload your own CSV for live Qwen-powered analysis.
 
 ---
 
@@ -110,8 +112,10 @@ During evaluation, we discovered that the prompt improvements correctly produced
 | **Backend API** | FastAPI + Uvicorn |
 | **AI / LLM** | Qwen (Alibaba Cloud Model Studio) via OpenAI-compatible API |
 | **Database** | SQLite + SQLAlchemy ORM |
-| **Frontend** | React + Tailwind CSS |
-| **Language** | Python 3.11+ |
+| **Frontend** | React + Tailwind CSS (Vite) |
+| **Backend Hosting** | Alibaba Cloud Function Compute (FC 3.0, Custom Runtime) |
+| **Frontend Hosting** | Vercel |
+| **Language** | Python 3.9 (FC runtime) / 3.11+ (local dev) |
 
 ## How to Run
 
@@ -166,25 +170,43 @@ This samples 100 reviews per class, runs them through the full pipeline, and sav
 
 ## Deploy
 
-Deploy the backend to **Alibaba Cloud Function Compute** (serverless, pay-per-invocation) using the included Serverless Devs config:
+### Backend — Alibaba Cloud Function Compute
+
+Dependencies are pre-installed locally into `.fc-deps/` for the FC custom runtime (Python 3.9 / Linux). All config lives in `s.yaml`.
 
 ```bash
-npm install -g @serverless-devs/s    # install the CLI
-export DASHSCOPE_API_KEY="sk-..."     # set your key
-s deploy                              # deploy to FC
+# 1. Pre-install dependencies for FC (Python 3.9, Linux)
+pip install --no-user --target .fc-deps -r requirements.txt \
+  --python-version 3.9 --platform manylinux2014_x86_64 --only-binary=:all:
+
+# 2. Deploy
+s deploy -y
 ```
 
-See [DEPLOYMENT.md](DEPLOYMENT.md) for the full step-by-step guide — credentials setup, region selection, frontend integration, logs, and tear-down.
+See [DEPLOYMENT.md](DEPLOYMENT.md) for the full guide.
+
+### Frontend — Vercel
+
+```bash
+cd frontend
+npm install -g vercel   # one-time
+vercel login            # one-time
+vercel --yes --prod     # deploy
+```
+
+The frontend's `API_BASE` in `src/App.jsx` must point to the FC backend URL.
 
 **Files:**
-- `s.yaml` — Serverless Devs config (FC 3.0, Custom Runtime, HTTP trigger)
-- `bootstrap` — Custom Runtime entry point (installs deps + starts uvicorn on port 9000)
-- `.fcignore` — excludes frontend, CSVs, and docs from the deployment package
+- `s.yaml` — Serverless Devs config (FC 3.0, Custom Runtime `custom.debian11`, HTTP trigger)
+- `bootstrap` — Custom Runtime entry point (sets PYTHONPATH, starts uvicorn on port 9000)
+- `.fcignore` — excludes frontend, CSVs, and docs from the FC deployment package
+- `.fc-deps/` — pre-installed Python dependencies (Python 3.9 Linux wheels)
 
 ## Roadmap
 
 - **Daraz Seller Center API** — pull reviews directly instead of CSV upload
 - **WhatsApp Business API** — send auto-reply drafts to sellers for one-tap approval
-- ~~**Alibaba Cloud Function Compute**~~ — ✅ serverless deployment configured (see [Deploy](#deploy))
+- ~~**Alibaba Cloud Function Compute**~~ — ✅ deployed to FC 3.0 (custom.debian11, Python 3.9)
+- ~~**Vercel Frontend**~~ — ✅ deployed and connected to FC backend
 - **Multilingual expansion** — Sindhi, Pashto, and Bengali review support
 - **Trend detection** — track aspect sentiment over time to surface emerging issues before ratings drop

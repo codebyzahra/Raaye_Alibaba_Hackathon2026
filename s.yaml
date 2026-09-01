@@ -34,12 +34,10 @@ resources:
         port: 9000
       code: ./
       environmentVariables:
-        # Secrets (DASHSCOPE_API_KEY) are NOT stored here — set them in the FC console
-        # after first deploy:  Function → Configuration → Environment Variables.
-        # Without the key, the app runs in demo mode (rule-based fallback).
+        DASHSCOPE_API_KEY: "sk-ws-H.DDMRYXL.o7nA.MEUCIQD4AGls6VeluDg78ghbtUkfEjIOPo_imq_vr6-8NXEuFwIgHbh9GRLV_m7cUG1sSAGjm_G2VBSHXqWgWWRTiGHk1mo"
         QWEN_MODEL: "qwen-plus-2025-07-28"
         DASHSCOPE_BASE_URL: "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"
-        DEMO_MODE: "true"
+        DEMO_MODE: "false"
       triggers:
         - triggerName: http-trigger
           triggerType: http

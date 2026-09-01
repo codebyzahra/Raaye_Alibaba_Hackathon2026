@@ -5,7 +5,7 @@ import {
   Zap, Send, Play, Store, Cpu, Shirt,
 } from 'lucide-react'
 
-const API_BASE = ''  // same origin via Vite proxy
+const API_BASE = 'https://raaye-api-qtzkqnhirs.ap-southeast-1.fcapp.run'
 
 const LOADING_MESSAGES = [
   'Connecting to Alibaba Cloud\u2026',
