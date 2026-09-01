@@ -1,4 +1,5 @@
 Wheel-Version: 1.0
 Generator: maturin (1.14.1)
 Root-Is-Purelib: false
-Tag: cp311-cp311-win_amd64
+Tag: cp39-cp39-manylinux_2_17_x86_64
+Tag: cp39-cp39-manylinux2014_x86_64

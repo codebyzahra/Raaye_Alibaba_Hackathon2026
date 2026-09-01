@@ -2,9 +2,9 @@
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
   "version": 1,
-  "serialNumber": "urn:uuid:b0daa5c2-590e-4b58-aab6-48eefd38e03a",
+  "serialNumber": "urn:uuid:11d217e8-5970-4419-a946-5f9a0698f970",
   "metadata": {
-    "timestamp": "2026-06-29T12:56:38.727870600Z",
+    "timestamp": "2026-06-29T12:56:27.823936124Z",
     "tools": [
       {
         "vendor": "CycloneDX",
@@ -20,7 +20,7 @@
     ],
     "component": {
       "type": "library",
-      "bom-ref": "path+file:///D:/a/jiter/jiter/crates/jiter-python#0.16.0",
+      "bom-ref": "path+file:///home/runner/work/jiter/jiter/crates/jiter-python#0.16.0",
       "author": "Samuel Colvin <samuel@pydantic.dev>",
       "name": "jiter-python",
       "version": "0.16.0",
@@ -44,7 +44,7 @@
       "components": [
         {
           "type": "library",
-          "bom-ref": "path+file:///D:/a/jiter/jiter/crates/jiter-python#0.16.0 bin-target-0",
+          "bom-ref": "path+file:///home/runner/work/jiter/jiter/crates/jiter-python#0.16.0 bin-target-0",
           "name": "jiter_python",
           "version": "0.16.0",
           "purl": "pkg:cargo/jiter-python@0.16.0?download_url=file://.#src/lib.rs"
@@ -61,7 +61,7 @@
   "components": [
     {
       "type": "library",
-      "bom-ref": "path+file:///D:/a/jiter/jiter/crates/jiter#0.16.0",
+      "bom-ref": "path+file:///home/runner/work/jiter/jiter/crates/jiter#0.16.0",
       "author": "Samuel Colvin <samuel@pydantic.dev>",
       "name": "jiter",
       "version": "0.16.0",
@@ -72,7 +72,7 @@
           "expression": "MIT"
         }
       ],
-      "purl": "pkg:cargo/jiter@0.16.0?download_url=file://..\\jiter",
+      "purl": "pkg:cargo/jiter@0.16.0?download_url=file://../jiter",
       "externalReferences": [
         {
           "type": "website",
@@ -1202,7 +1202,7 @@
   ],
   "dependencies": [
     {
-      "ref": "path+file:///D:/a/jiter/jiter/crates/jiter#0.16.0",
+      "ref": "path+file:///home/runner/work/jiter/jiter/crates/jiter#0.16.0",
       "dependsOn": [
         "registry+https://github.com/rust-lang/crates.io-index#ahash@0.8.12",
         "registry+https://github.com/rust-lang/crates.io-index#bitvec@1.1.1",
@@ -1215,9 +1215,9 @@
       ]
     },
     {
-      "ref": "path+file:///D:/a/jiter/jiter/crates/jiter-python#0.16.0",
+      "ref": "path+file:///home/runner/work/jiter/jiter/crates/jiter-python#0.16.0",
       "dependsOn": [
-        "path+file:///D:/a/jiter/jiter/crates/jiter#0.16.0",
+        "path+file:///home/runner/work/jiter/jiter/crates/jiter#0.16.0",
         "registry+https://github.com/rust-lang/crates.io-index#pyo3@0.29.0"
       ]
     },
