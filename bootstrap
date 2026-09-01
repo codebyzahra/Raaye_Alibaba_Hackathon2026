@@ -1,23 +1,18 @@
 #!/usr/bin/env bash
 # Alibaba Cloud Function Compute — Custom Runtime bootstrap
-# This script runs once per container cold-start.
-# Subsequent warm invocations reuse the running uvicorn process.
 
 set -euo pipefail
 
 CODE_DIR="/code"
 cd "$CODE_DIR"
 
-# Install Python dependencies (cached after first cold-start within same instance)
-if [ ! -f /tmp/.deps_installed ]; then
-  echo "[bootstrap] Installing Python dependencies ..."
-  pip install --no-cache-dir -q -r requirements.txt
-  touch /tmp/.deps_installed
-  echo "[bootstrap] Dependencies installed."
-fi
+# Use pre-installed dependencies bundled in .fc-deps/
+export PYTHONPATH="/code/.fc-deps:${PYTHONPATH:-}"
+
+PYTHON="${PYTHON:-$(command -v python3 || command -v python || echo python3)}"
 
 echo "[bootstrap] Starting Raaye API on port 9000 ..."
-exec uvicorn main:app \
+exec "$PYTHON" -m uvicorn main:app \
   --host 0.0.0.0 \
   --port 9000 \
   --workers 1 \

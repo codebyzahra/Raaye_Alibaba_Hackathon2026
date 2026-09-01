@@ -4,6 +4,21 @@
 
 ---
 
+## Live Demo
+
+> **Coming soon** — the live deployment URL will be published here once hosted on Alibaba Cloud.
+
+For now, run locally with `DEMO_MODE=true` (see [How to Run](#how-to-run)) to explore the dashboard with pre-cached results from three demo businesses.
+
+---
+
+## Screenshots
+
+<!-- TODO: add dashboard screenshots here -->
+| Upload & Demo Selector | KPI Dashboard | Flagged Reviews & Auto-Replies |
+|:---:|:---:|:---:|
+| *screenshot pending* | *screenshot pending* | *screenshot pending* |
+
 ## The Problem
 
 A mid-size Daraz seller wakes up to 300 new reviews. Half are in Roman Urdu ("*bohat achi quality but delivery late thi*"), mixed with English, emoji, and abbreviations that no off-the-shelf tool can parse. Recurring complaints — late deliveries, wrong sizes, damaged packaging — go unnoticed for weeks until ratings silently drop and sales follow. Existing sentiment analysis tools are built for English, return a single thumbs-up or thumbs-down per review, and give sellers zero actionable next steps. For a seller managing thousands of reviews across dozens of SKUs, this isn't an analytics gap — it's a revenue leak.
@@ -56,12 +71,20 @@ But detection is only half the job. Raaye closes the loop: for every negative as
 └──────────────────────┬───────────────────────────────────┘
                        │
                        ▼
-┌──────────────┐   ┌────────────────┐
-│   SQLite /   │   │   Dashboard    │
-│  SQLAlchemy  │◄──│   (Frontend)   │
-│  raaye.db    │   │   React +      │
-└──────────────┘   │   Tailwind CSS │
-                   └────────────────┘
+┌──────────────┐   ┌─────────────────────────────────────────┐
+│   SQLite /   │   │          Dashboard (Frontend)            │
+│  SQLAlchemy  │◄──│          React + Tailwind CSS            │
+│  raaye.db    │   │                                         │
+└──────────────┘   │  ┌───────────────────────────────────┐  │
+                   │  │  Demo Business Selector           │  │
+                   │  │  TechHub Electronics              │  │
+                   │  │  Zara's Fashion Store             │  │
+                   │  │  General Store Demo               │  │
+                   │  │  (cached results, instant load)   │  │
+                   │  └───────────────────────────────────┘  │
+                   │  CSV Upload · KPI Cards · Flagged       │
+                   │  Reviews · AI Auto-Reply Approval       │
+                   └─────────────────────────────────────────┘
 ```
 
 ## Key Results
@@ -126,7 +149,7 @@ The API is live at `http://localhost:8000`. Endpoints:
 
 ### 4. Demo mode (no API key required)
 
-Set `DEMO_MODE=true` in `.env` to serve 18 pre-cached reviews instantly — useful for demos and judging without consuming API quota:
+Set `DEMO_MODE=true` in `.env` to instantly load cached reviews from three demo businesses (38 reviews total) — useful for demos and judging without consuming API quota. The dashboard shows clickable business cards: **TechHub Electronics**, **Zara's Fashion Store**, and **General Store Demo**.
 
 ```bash
 # Regenerate the cache with live Qwen results (optional):
@@ -141,10 +164,27 @@ python evaluation/run_benchmark.py --per-class 100
 
 This samples 100 reviews per class, runs them through the full pipeline, and saves misclassified examples to `misclassified_examples.json`.
 
+## Deploy
+
+Deploy the backend to **Alibaba Cloud Function Compute** (serverless, pay-per-invocation) using the included Serverless Devs config:
+
+```bash
+npm install -g @serverless-devs/s    # install the CLI
+export DASHSCOPE_API_KEY="sk-..."     # set your key
+s deploy                              # deploy to FC
+```
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for the full step-by-step guide — credentials setup, region selection, frontend integration, logs, and tear-down.
+
+**Files:**
+- `s.yaml` — Serverless Devs config (FC 3.0, Custom Runtime, HTTP trigger)
+- `bootstrap` — Custom Runtime entry point (installs deps + starts uvicorn on port 9000)
+- `.fcignore` — excludes frontend, CSVs, and docs from the deployment package
+
 ## Roadmap
 
 - **Daraz Seller Center API** — pull reviews directly instead of CSV upload
 - **WhatsApp Business API** — send auto-reply drafts to sellers for one-tap approval
-- **Alibaba Cloud Function Compute** — serverless deployment for pay-per-review scaling
+- ~~**Alibaba Cloud Function Compute**~~ — ✅ serverless deployment configured (see [Deploy](#deploy))
 - **Multilingual expansion** — Sindhi, Pashto, and Bengali review support
 - **Trend detection** — track aspect sentiment over time to surface emerging issues before ratings drop

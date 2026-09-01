@@ -1,4 +1,7 @@
 {
+  "business_id": "general",
+  "business_name": "General Store Demo",
+  "business_description": "Mixed product reviews from a multi-category Daraz seller",
   "demo_reviews": [
     {
       "review": "Bohat hi kamal kay Airbird hain sound or bass bohat hi kamal ka hai battery timing bohat achi hai",

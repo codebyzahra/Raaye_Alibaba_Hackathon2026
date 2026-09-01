@@ -23,6 +23,10 @@ __pycache__/
 *.py[cod]
 *.egg-info/
 
+# Pre-installed deps: skip cache/metadata, keep the packages
+.fc-deps/__pycache__/
+.fc-deps/*.dist-info/
+
 # Environment & secrets
 .env
 .env.*

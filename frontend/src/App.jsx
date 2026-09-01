@@ -2,7 +2,7 @@ import { useState, useRef, useMemo, useEffect } from 'react'
 import {
   Upload, FileText, AlertTriangle, AlertCircle, BarChart3,
   MessageSquare, ChevronDown, ChevronUp, Pencil, Check,
-  Zap, Send, Play,
+  Zap, Send, Play, Store, Cpu, Shirt,
 } from 'lucide-react'
 
 const API_BASE = ''  // same origin via Vite proxy
@@ -23,7 +23,17 @@ export default function App() {
   const [error, setError] = useState('')
   const [loadingMsg, setLoadingMsg] = useState(LOADING_MESSAGES[0])
   const [toast, setToast] = useState(null)
+  const [businesses, setBusinesses] = useState([])
+  const [activeBusiness, setActiveBusiness] = useState(null)
   const fileRef = useRef(null)
+
+  // Fetch available demo businesses on mount
+  useEffect(() => {
+    fetch(`${API_BASE}/api/demo/businesses`)
+      .then((r) => (r.ok ? r.json() : []))
+      .then((data) => setBusinesses(data))
+      .catch(() => setBusinesses([]))
+  }, [])
 
   // Rotating loading messages every 1.5s
   useEffect(() => {
@@ -73,13 +83,17 @@ export default function App() {
     }
   }
 
-  // Demo mode: trigger cached results from backend
-  async function handleDemo() {
+  // Demo mode: load cached results for a specific business
+  async function handleDemo(businessId) {
     setError('')
     setUploadStatus('uploading')
+    setActiveBusiness(businessId)
     try {
-      const res = await fetch(`${API_BASE}/api/upload?demo=true`, { method: 'POST' })
-      if (!res.ok) throw new Error(`Demo mode unavailable — start backend with DEMO_MODE=true`)
+      const res = await fetch(`${API_BASE}/api/demo/${businessId}`, { method: 'POST' })
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}))
+        throw new Error(body.detail || `Demo mode unavailable — start backend with DEMO_MODE=true`)
+      }
       const data = await res.json()
       setUploadResult(data)
       const revRes = await fetch(`${API_BASE}/api/reviews?limit=${data.reviews_saved || 100}`)
@@ -164,13 +178,15 @@ export default function App() {
         </div>
       )}
 
-      <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-10 space-y-10">
+      <main className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-10 py-10 space-y-10">
         <UploadZone
           status={uploadStatus}
           dragActive={dragActive}
           setDragActive={setDragActive}
           onFile={handleFile}
           onDemo={handleDemo}
+          businesses={businesses}
+          activeBusiness={activeBusiness}
           fileRef={fileRef}
           loadingMsg={loadingMsg}
         />
@@ -199,6 +215,8 @@ export default function App() {
 
         {uploadStatus === 'idle' && <EmptyState />}
       </main>
+
+      <Footer />
     </div>
   )
 }
@@ -206,9 +224,32 @@ export default function App() {
 // ── Sub-components ────────────────────────────────────────────────────────
 
 function Header() {
+  const patternSvg = [
+    '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">',
+    '<g stroke="rgb(255,255,255)" fill="none" opacity="0.07">',
+    '<rect x="15" y="24" width="14" height="16" rx="1.5" stroke-width="1.2"/>',
+    '<path d="M18 24V19a4 4 0 018 0v5" stroke-width="1.2"/>',
+    '</g>',
+    '<path d="M70 15l2.5 5.1 5.6.8-4.1 4 1 5.6-5-2.6-5 2.6 1-5.6-4.1-4 5.6-.8z" fill="rgb(255,255,255)" fill-opacity="0.06"/>',
+    '<g fill="rgb(255,255,255)" opacity="0.05">',
+    '<rect x="40" y="70" width="4" height="12" rx="0.5"/>',
+    '<rect x="46" y="65" width="4" height="17" rx="0.5"/>',
+    '<rect x="52" y="60" width="4" height="22" rx="0.5"/>',
+    '</g>',
+    '</svg>',
+  ].join('')
+
   return (
-    <header className="bg-brand-900 text-white w-full">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-8 flex items-center justify-between">
+    <header className="bg-brand-900 text-white w-full relative overflow-hidden">
+      {/* Subtle e-commerce pattern overlay */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,${encodeURIComponent(patternSvg)}")`,
+          backgroundRepeat: 'repeat',
+        }}
+      />
+      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-10 py-8 flex items-center justify-between">
         <div>
           <h1 className="text-4xl font-extrabold tracking-tight">
             Raaye
@@ -223,8 +264,76 @@ function Header() {
   )
 }
 
-function UploadZone({ status, dragActive, setDragActive, onFile, onDemo, fileRef, loadingMsg }) {
+function Footer() {
+  const patternSvg = [
+    '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">',
+    '<g stroke="rgb(255,255,255)" fill="none" opacity="0.07">',
+    '<rect x="15" y="24" width="14" height="16" rx="1.5" stroke-width="1.2"/>',
+    '<path d="M18 24V19a4 4 0 018 0v5" stroke-width="1.2"/>',
+    '</g>',
+    '<path d="M70 15l2.5 5.1 5.6.8-4.1 4 1 5.6-5-2.6-5 2.6 1-5.6-4.1-4 5.6-.8z" fill="rgb(255,255,255)" fill-opacity="0.06"/>',
+    '<g fill="rgb(255,255,255)" opacity="0.05">',
+    '<rect x="40" y="70" width="4" height="12" rx="0.5"/>',
+    '<rect x="46" y="65" width="4" height="17" rx="0.5"/>',
+    '<rect x="52" y="60" width="4" height="22" rx="0.5"/>',
+    '</g>',
+    '</svg>',
+  ].join('')
+
+  return (
+    <footer className="bg-brand-900 text-white w-full relative overflow-hidden mt-10">
+      {/* Subtle e-commerce pattern overlay — matches header */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,${encodeURIComponent(patternSvg)}")`,
+          backgroundRepeat: 'repeat',
+        }}
+      />
+      <div className="relative text-center py-8">
+        <p className="text-white font-medium text-[15px]">
+          Raaye — Built for the Alibaba Cloud AI Hackathon 2026
+        </p>
+        <p className="text-brand-200 text-[13px] mt-1.5">
+          Powered by Qwen (Alibaba Cloud Model Studio)
+        </p>
+      </div>
+    </footer>
+  )
+}
+
+function UploadZone({ status, dragActive, setDragActive, onFile, onDemo, businesses, activeBusiness, fileRef, loadingMsg }) {
   const isIdle = status !== 'uploading'
+
+  const BUSINESS_ICONS = {
+    electronics: <Cpu className="w-7 h-7" />,
+    fashion: <Shirt className="w-7 h-7" />,
+  }
+
+  const BUSINESS_COLORS = {
+    electronics: {
+      active: 'bg-blue-50 border-blue-200 ring-2 ring-blue-300 shadow-md',
+      idle: 'bg-white border-gray-200 hover:bg-blue-100 hover:border-blue-200 hover:shadow-md',
+      text: 'text-blue-700',
+      icon: 'text-blue-500',
+      dot: 'bg-blue-500',
+    },
+    fashion: {
+      active: 'bg-pink-50 border-pink-200 ring-2 ring-pink-300 shadow-md',
+      idle: 'bg-white border-gray-200 hover:bg-pink-100 hover:border-pink-200 hover:shadow-md',
+      text: 'text-pink-700',
+      icon: 'text-pink-500',
+      dot: 'bg-pink-500',
+    },
+  }
+
+  const DEFAULT_COLORS = {
+    active: 'bg-indigo-50 border-indigo-200 ring-2 ring-indigo-300 shadow-md',
+    idle: 'bg-white border-gray-200 hover:bg-indigo-100 hover:border-indigo-200 hover:shadow-md',
+    text: 'text-indigo-700',
+    icon: 'text-indigo-500',
+    dot: 'bg-indigo-500',
+  }
 
   return (
     <div className="space-y-4">
@@ -279,26 +388,58 @@ function UploadZone({ status, dragActive, setDragActive, onFile, onDemo, fileRef
         )}
       </section>
 
-      {/* Demo data button */}
-      <div className="text-center">
-        <button
-          className={`
-            inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-semibold text-[15px]
-            transition-all duration-200
-            ${status === 'uploading'
-              ? 'bg-gray-100 text-gray-400 cursor-wait'
-              : 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 hover:border-indigo-300'}
-          `}
-          onClick={onDemo}
-          disabled={status === 'uploading'}
-        >
-          <Play className="w-4 h-4" />
-          {status === 'uploading' ? 'Processing\u2026' : 'Run Demo Data'}
-        </button>
-        <p className="text-gray-400 text-xs mt-1.5">
-          Instantly loads cached results — no API calls needed
-        </p>
-      </div>
+      {/* Demo business selector */}
+      {businesses.length > 0 && (
+        <div>
+          <div className="flex items-center gap-2 mb-3">
+            <Play className="w-4 h-4 text-indigo-500" />
+            <span className="text-sm font-semibold text-gray-500 uppercase tracking-wider">
+              Or try a demo business
+            </span>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {businesses.map((biz) => {
+              const colors = BUSINESS_COLORS[biz.id] || DEFAULT_COLORS
+              const isActive = activeBusiness === biz.id && status === 'done'
+              return (
+                <button
+                  key={biz.id}
+                  className={`
+                    group relative text-left rounded-xl p-5 border-2 transition-all duration-200
+                    ${isActive ? colors.active : colors.idle}
+                    ${status === 'uploading' ? 'opacity-50 cursor-wait' : 'cursor-pointer'}
+                  `}
+                  onClick={() => status !== 'uploading' && onDemo(biz.id)}
+                  disabled={status === 'uploading'}
+                >
+                  <div className="flex items-start gap-3.5">
+                    <div className={`${colors.icon} shrink-0 mt-0.5`}>
+                      {BUSINESS_ICONS[biz.id] || <Store className="w-7 h-7" />}
+                    </div>
+                    <div className="min-w-0">
+                      <h3 className={`font-bold text-[16px] leading-tight ${colors.text}`}>
+                        {biz.name}
+                      </h3>
+                      <p className="text-gray-500 text-[13px] mt-1 leading-snug">
+                        {biz.description}
+                      </p>
+                      <span className="inline-block mt-2.5 text-xs font-semibold bg-gray-100 text-gray-500 rounded-full px-2.5 py-1">
+                        {biz.review_count} reviews
+                      </span>
+                    </div>
+                  </div>
+                  {isActive && (
+                    <div className={`absolute top-3 right-3 w-2.5 h-2.5 rounded-full ${colors.dot}`} />
+                  )}
+                </button>
+              )
+            })}
+          </div>
+          <p className="text-gray-400 text-xs mt-2">
+            Instantly loads cached results &mdash; no API calls needed
+          </p>
+        </div>
+      )}
     </div>
   )
 }
@@ -560,7 +701,7 @@ function EmptyState() {
       </h2>
       <p className="text-gray-400 mt-3 max-w-lg mx-auto text-lg leading-relaxed">
         Export your customer reviews as a CSV file and drop it above,
-        or click <strong className="text-indigo-500">Run Demo Data</strong> to see
+        or select a <strong className="text-indigo-500">demo business</strong> below to see
         Raaye in action instantly.
       </p>
     </section>

@@ -14,7 +14,7 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 from dotenv import load_dotenv
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
 from database import init_db, get_db, Review, AspectSentiment, Action
@@ -30,29 +30,31 @@ logger = logging.getLogger(__name__)
 # --- demo mode (cached results, zero API calls) --------------------------
 
 DEMO_MODE = os.getenv("DEMO_MODE", "false").strip().lower() in ("true", "1", "yes")
-_DEMO_CACHE: dict[str, dict] = {}
+_DEMO_CACHES: dict[str, dict] = {}       # business_id → full cache dict
+_DEMO_REVIEWS: dict[str, dict] = {}      # normalized_text → absa result (merged)
 
 if DEMO_MODE:
-    _cache_path = Path(__file__).parent / "data" / "cached_demo_results.json"
-    try:
-        with open(_cache_path, encoding="utf-8") as _f:
-            _data = json.load(_f)
-        _DEMO_CACHE = {
-            entry["normalized"]: entry["absa"]
-            for entry in _data["demo_reviews"]
-        }
-        logger.info(
-            "DEMO_MODE enabled — loaded %d cached reviews from %s",
-            len(_DEMO_CACHE), _cache_path.name,
-        )
-    except FileNotFoundError:
-        logger.error(
-            "DEMO_MODE=true but %s not found. "
-            "Run: python evaluation/generate_demo_cache.py",
-            _cache_path,
-        )
-    except Exception as exc:
-        logger.error("Failed to load demo cache: %s", exc)
+    _data_dir = Path(__file__).parent / "data"
+    for _cache_file in sorted(_data_dir.glob("*.json")):
+        try:
+            with open(_cache_file, encoding="utf-8") as _f:
+                _data = json.load(_f)
+            if "demo_reviews" not in _data:
+                continue
+            _bid = _data.get("business_id", _cache_file.stem)
+            _DEMO_CACHES[_bid] = _data
+            for _entry in _data["demo_reviews"]:
+                _DEMO_REVIEWS[_entry["normalized"]] = _entry["absa"]
+            logger.info(
+                "DEMO_MODE — loaded '%s' (%d reviews) from %s",
+                _bid, len(_data["demo_reviews"]), _cache_file.name,
+            )
+        except Exception as exc:
+            logger.error("Failed to load demo cache %s: %s", _cache_file.name, exc)
+    logger.info(
+        "DEMO_MODE summary: %d business(es), %d total cached reviews",
+        len(_DEMO_CACHES), len(_DEMO_REVIEWS),
+    )
 
 
 # --- app setup -----------------------------------------------------------
@@ -91,7 +93,7 @@ def analyze(request: ABSARequest) -> list[dict]:
         results = []
         for review in request.reviews:
             norm = normalize(review)
-            cached = _DEMO_CACHE.get(norm)
+            cached = _DEMO_REVIEWS.get(norm)
             if cached:
                 results.append(cached)
             else:
@@ -147,3 +149,82 @@ def list_reviews(
             "actions": actions,
         })
     return result
+
+
+# --- demo business endpoints ----------------------------------------------
+
+@app.get("/api/demo/businesses")
+def list_demo_businesses() -> list[dict]:
+    """Return metadata for all available demo businesses."""
+    businesses = []
+    for bid, cache in _DEMO_CACHES.items():
+        businesses.append({
+            "id": bid,
+            "name": cache.get("business_name", bid),
+            "description": cache.get("business_description", ""),
+            "review_count": cache.get("meta", {}).get("count", 0),
+        })
+    return businesses
+
+
+@app.post("/api/demo/{business_id}")
+def load_demo(
+    business_id: str,
+    db: Session = Depends(get_db),
+) -> dict:
+    """Load cached demo reviews into the database for a specific business."""
+    if not DEMO_MODE:
+        raise HTTPException(400, "Demo mode is not enabled")
+    cache = _DEMO_CACHES.get(business_id)
+    if not cache:
+        raise HTTPException(404, f"Demo business '{business_id}' not found")
+
+    total = 0
+    actions_saved = 0
+    for entry in cache.get("demo_reviews", []):
+        review = Review(
+            raw_text=entry["review"],
+            normalized_text=entry["normalized"],
+            source=f"demo_{business_id}",
+        )
+        db.add(review)
+        db.flush()
+        total += 1
+
+        for asp in entry.get("absa", {}).get("aspects", []):
+            db.add(AspectSentiment(
+                review_id=review.id,
+                aspect=asp["aspect"],
+                sentiment=asp["sentiment"],
+                confidence=asp["confidence"],
+            ))
+
+        for act in entry.get("actions", []):
+            reply = act.get("auto_reply", "")
+            if reply:
+                db.add(Action(
+                    review_id=review.id,
+                    action_type="auto_reply",
+                    action_text=reply,
+                ))
+                actions_saved += 1
+
+    try:
+        db.commit()
+    except Exception as exc:
+        db.rollback()
+        raise HTTPException(500, f"Failed to persist demo data: {exc}")
+
+    return {
+        "status": "success",
+        "total_reviews": total,
+        "reviews_saved": total,
+        "reviews_failed": 0,
+        "aspects_saved": sum(
+            len(e.get("absa", {}).get("aspects", []))
+            for e in cache.get("demo_reviews", [])
+        ),
+        "actions_saved": actions_saved,
+        "business_name": cache.get("business_name", business_id),
+        "errors": None,
+    }
