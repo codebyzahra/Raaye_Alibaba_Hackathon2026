@@ -18,7 +18,7 @@ The frontend is hosted on **Vercel** and the backend runs on **Alibaba Cloud Fun
 
 | Upload & Demo Selector | KPI Dashboard | Flagged Reviews & Auto-Replies |
 |:---:|:---:|:---:|
-| ![Demo Selector](screenshots/dashboard-demo-selector.png) | *screenshot pending* | ![Flagged Reviews](screenshots/flagged-reviews-auto-reply.png) |
+| ![Demo Selector](screenshots/dashboard-demo-selector.png) | ![KPI Dashboard](screenshots/kpi-Dashboard.png) | ![Flagged Reviews](screenshots/flagged-reviews-auto-reply.png) |
 
 ## The Problem
 
@@ -103,6 +103,16 @@ Evaluated on a balanced test set of **300 Daraz reviews** (100 per class) from `
 ### Technical highlight: the tie-breaking bug
 
 During evaluation, we discovered that the prompt improvements correctly produced balanced mixed-sentiment aspects for neutral reviews (e.g., 1 positive + 1 negative), but the `overall_sentiment()` aggregation function broke ties by confidence — reliably picking a polarity winner instead of returning "neutral". A two-line fix (`if positive and negative are tied → return neutral`) jumped accuracy from 68% to 76.7% and neutral F1 from 0.250 to 0.587. This was a case where improving the model output exposed a downstream aggregation bug — the fix was in the evaluation layer, not the prompt.
+
+## Efficiency & Cost Discipline
+
+Built with deliberate resource discipline for the hackathon's credit constraints:
+
+- **Qoder credits:** Completed development using approximately **670 of 2,490** available Qoder credits.
+- **Batched LLM calls:** Qwen API calls are batched (up to 10 reviews per request) to reduce both latency and per-review API cost versus one-call-per-review.
+- **SQLite for MVP:** SQLite used for the MVP instead of a provisioned cloud database — zero infrastructure cost, faster to build, same schema portable to Alibaba Cloud RDS later.
+- **Demo mode:** The `DEMO_MODE` flag serves pre-cached results instantly during live demos, avoiding unnecessary live API calls when testing or presenting.
+- **Serverless free tier:** Alibaba Cloud Function Compute free tier (1M requests + 400,000 GB-seconds/month) comfortably covers hackathon-scale usage at zero cost.
 
 ## Tech Stack
 
