@@ -23,7 +23,7 @@ The frontend is hosted on **Vercel** and the backend runs on **Alibaba Cloud Fun
 
 ## The Problem
 
-A mid-size Daraz seller wakes up to 300 new reviews. Half are in Roman Urdu ("*bohat achi quality but delivery late thi*"), mixed with English, emoji, and abbreviations that no off-the-shelf tool can parse. Recurring complaints — late deliveries, wrong sizes, damaged packaging — go unnoticed for weeks until ratings silently drop and sales follow. Existing sentiment analysis tools are built for English, return a single thumbs-up or thumbs-down per review, and give sellers zero actionable next steps. For a seller managing thousands of reviews across dozens of SKUs, this isn't an analytics gap — it's a revenue leak.
+A mid-size Daraz or other SME seller wakes up to 300 new reviews. Half are in Roman Urdu ("*bohat achi quality but delivery late thi*"), mixed with English, emoji, and abbreviations that no off-the-shelf tool can parse. Recurring complaints — late deliveries, wrong sizes, damaged packaging — go unnoticed for weeks until ratings silently drop and sales follow. Existing sentiment analysis tools are built for English, return a single thumbs-up or thumbs-down per review, and give sellers zero actionable next steps. For a seller managing thousands of reviews across dozens of SKUs, this isn't an analytics gap — it's a revenue leak.
 
 ## The Solution
 
