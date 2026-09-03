@@ -21,7 +21,7 @@ from database import init_db, get_db, Review, AspectSentiment, Action
 from sqlalchemy.orm import Session
 from preprocessing.normalizer import normalize
 from routers.upload import router as upload_router
-from services.absa_engine import MAX_BATCH, analyze_reviews, API_KEY, BASE_URL, MODEL, _call_model
+from services.absa_engine import MAX_BATCH, analyze_reviews
 
 load_dotenv()
 logging.basicConfig(level=logging.INFO)
@@ -108,37 +108,6 @@ def analyze(request: ABSARequest) -> list[dict]:
         return results
     return analyze_reviews(request.reviews)
 
-
-# --- temporary debug endpoint (remove before production) -----------------
-
-@app.get("/health")
-def health_check() -> dict:
-    """Debug endpoint: env status + live Qwen connectivity test."""
-    api_key_set = bool(API_KEY)
-    model_loaded = MODEL
-
-    qwen_test: dict = {}
-    if not api_key_set:
-        qwen_test = {"status": "skipped", "error": "DASHSCOPE_API_KEY is not set"}
-    else:
-        try:
-            raw = _call_model(
-                'Respond with ONLY the text: {"ok": true}'
-            )
-            qwen_test = {"status": "ok", "raw_response": raw[:300]}
-        except Exception as exc:
-            qwen_test = {
-                "status": "error",
-                "error_type": type(exc).__name__,
-                "error_message": str(exc),
-            }
-
-    return {
-        "api_key_set": api_key_set,
-        "model": model_loaded,
-        "base_url": BASE_URL,
-        "qwen_test": qwen_test,
-    }
 
 
 # --- dashboard data endpoint ---------------------------------------------

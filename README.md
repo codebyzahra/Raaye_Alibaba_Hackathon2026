@@ -16,10 +16,9 @@ The frontend is hosted on **Vercel** and the backend runs on **Alibaba Cloud Fun
 
 ## Screenshots
 
-<!-- TODO: add dashboard screenshots here -->
 | Upload & Demo Selector | KPI Dashboard | Flagged Reviews & Auto-Replies |
 |:---:|:---:|:---:|
-| *screenshot pending* | *screenshot pending* | *screenshot pending* |
+| ![Demo Selector](screenshots/dashboard-demo-selector.png) | *screenshot pending* | ![Flagged Reviews](screenshots/flagged-reviews-auto-reply.png) |
 
 ## The Problem
 
