@@ -2,7 +2,7 @@
 
 This guide deploys the Raaye FastAPI backend to **Alibaba Cloud Function Compute (FC 3.0)** using a Custom Runtime (`custom.debian11`, Python 3.9). The frontend is deployed separately on **Vercel**.
 
-> **Scope:** Function Compute + Vercel. No ECS, no RDS. SQLite is created in-function ephemeral storage — fine for demos, not for persistent production data.
+> **Scope:** Function Compute + Vercel. No ECS, no RDS. SQLite is created in-function ephemeral storage.
 
 ---
 
@@ -72,7 +72,7 @@ This will:
 3. Create/update the function `raaye-api` with Custom Runtime `custom.debian11`
 4. Set up the HTTP trigger
 
-> **Important:** All environment variables are configured in `s.yaml`. Do **not** change settings in the FC console — `s deploy` will overwrite them back to what's in `s.yaml`.
+> **Important:** `s.yaml` does **not** contain sensitive or model-specific environment variables. After deploying, set `DASHSCOPE_API_KEY`, `QWEN_MODEL`, and `DASHSCOPE_BASE_URL` manually in the FC console (see [Step 4](#4-environment-variables)). The only variable in `s.yaml` is `DEMO_MODE`.
 
 ### Change the region
 
@@ -88,7 +88,12 @@ Available regions: `ap-southeast-1` (Singapore), `cn-shanghai`, `cn-hangzhou`, `
 
 ## 4. Environment variables
 
-All variables are set in `s.yaml` and deployed automatically:
+`DEMO_MODE` is set in `s.yaml` and deployed automatically. The remaining variables must be set **manually in the FC console** so that secrets are never committed to source control:
+
+1. Open the [Function Compute console](https://fc.console.aliyun.com).
+2. Select the **`raaye-api`** function in region **ap-southeast-1**.
+3. Go to **Configuration → Environment Variables**.
+4. Add the following variables:
 
 | Variable | Value | Description |
 |----------|-------|-------------|
@@ -99,7 +104,7 @@ All variables are set in `s.yaml` and deployed automatically:
 
 > **Without `DASHSCOPE_API_KEY`**, the app falls back to the rule-based keyword analyzer. Demo businesses (cached JSON) work regardless of this setting.
 
-To change any variable, edit `s.yaml` and run `s deploy -y`.
+> **Note:** `s deploy` does not overwrite variables set in the console that are absent from `s.yaml`, so your secrets persist across redeployments.
 
 ---
 
@@ -201,9 +206,9 @@ s remove
 | `ImportError: cannot import name 'Literal' from 'typing'` | Runtime reverted to Python 3.7 — redeploy to restore `custom.debian11` |
 | `ModuleNotFoundError: pydantic_core._pydantic_core` | Rebuild `.fc-deps/` with `--python-version 3.9 --platform manylinux2014_x86_64` |
 | Demo businesses not showing | Ensure demo cache JSON files exist in `data/` and caches load at startup |
-| Qwen calls fail / fallback active | Verify `DASHSCOPE_API_KEY` is set in `s.yaml` and redeploy |
+| Qwen calls fail / fallback active | Verify `DASHSCOPE_API_KEY` is set in the FC console (Configuration → Environment Variables) |
 | Function too large | Check `.fcignore` is excluding frontend/, evaluation/, and CSV files |
-| Settings revert after console edit | Never edit in FC console — always edit `s.yaml` and run `s deploy -y` |
+| Settings revert after console edit | Only `DEMO_MODE` is in `s.yaml`; other vars are set in the FC console and persist across deploys |
 
 ---
 

@@ -20,7 +20,7 @@ resources:
     props:
       region: ${vars.region}
       functionName: raaye-api
-      description: "Raaye — AI-powered aspect-based sentiment analysis for Daraz reviews"
+      description: "Raaye — AI-Powered Feedback-to-Action Engine for Pakistani SMEs"
       runtime: custom.debian11
       handler: index.handler
       timeout: 90
@@ -34,9 +34,6 @@ resources:
         port: 9000
       code: ./
       environmentVariables:
-        DASHSCOPE_API_KEY: "sk-ws-H.DDMRYXL.o7nA.MEUCIQD4AGls6VeluDg78ghbtUkfEjIOPo_imq_vr6-8NXEuFwIgHbh9GRLV_m7cUG1sSAGjm_G2VBSHXqWgWWRTiGHk1mo"
-        QWEN_MODEL: "qwen-plus-2025-07-28"
-        DASHSCOPE_BASE_URL: "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"
         DEMO_MODE: "false"
       triggers:
         - triggerName: http-trigger
