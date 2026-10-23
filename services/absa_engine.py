@@ -18,8 +18,10 @@ import json
 import logging
 import os
 import re
+import time
 
 from dotenv import load_dotenv
+import httpx
 from openai import OpenAI
 
 load_dotenv()  # load .env if present; env vars still take precedence
@@ -33,10 +35,15 @@ BASE_URL = os.getenv(
     "DASHSCOPE_BASE_URL", "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"
 )
 MODEL = os.getenv("QWEN_MODEL", "qwen-plus-2025-07-28")
-TIMEOUT_SECONDS = 30.0
-ATTEMPTS = 2          # initial call + one retry
-MAX_BATCH = 10
+# 30s total per request with a tight 10s connect budget (TLS handshake headroom).
+MODEL_TIMEOUT = httpx.Timeout(30.0, connect=10.0)
+ATTEMPTS = 1          # single attempt — fast fallback beats risking a function timeout
+MAX_BATCH = 4         # 3-4 reviews per Qwen call
 SENTIMENTS = ("positive", "negative", "neutral")
+# Output budget: cap max_tokens to roughly what the JSON array needs instead of
+# letting the model run long. ~150 tokens per review, hard-capped per call.
+MAX_TOKENS_PER_REVIEW = 150
+MAX_OUTPUT_TOKENS_CAP = 600
 
 # --- prompt --------------------------------------------------------------
 
@@ -193,18 +200,37 @@ def _coerce_entry(entry) -> dict:
     return {"aspects": aspects}
 
 
-def _call_model(prompt: str) -> str:
+def _call_model(prompt: str, n_reviews: int = 1) -> str:
     client = OpenAI(
         api_key=API_KEY, base_url=BASE_URL,
-        timeout=TIMEOUT_SECONDS, max_retries=0,
+        timeout=MODEL_TIMEOUT, max_retries=0,
     )
-    response = client.chat.completions.create(
-        model=MODEL,
-        temperature=0.0,
-        messages=[
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": prompt},
-        ],
+    # Cap the response to what the JSON needs; disable Qwen's thinking mode
+    # (adds latency and is useless for a raw-JSON task).
+    max_tokens = min(MAX_OUTPUT_TOKENS_CAP, MAX_TOKENS_PER_REVIEW * max(1, n_reviews))
+    started = time.perf_counter()
+    try:
+        response = client.chat.completions.create(
+            model=MODEL,
+            temperature=0.0,
+            max_tokens=max_tokens,
+            messages=[
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": prompt},
+            ],
+            extra_body={"enable_thinking": False},
+        )
+    except Exception as exc:
+        elapsed = time.perf_counter() - started
+        logger.info(
+            "Qwen call failed after %.2fs (reviews=%d, max_tokens=%d) — %s: %s",
+            elapsed, n_reviews, max_tokens, type(exc).__name__, exc,
+        )
+        raise
+    elapsed = time.perf_counter() - started
+    logger.info(
+        "Qwen call completed in %.2fs (reviews=%d, max_tokens=%d)",
+        elapsed, n_reviews, max_tokens,
     )
     return response.choices[0].message.content or ""
 
@@ -265,8 +291,33 @@ def _fallback_entry(review: str) -> dict:
 
 # --- public API -----------------------------------------------------------
 
+def _fallback_results(normalized: list[str], reason: str) -> list[dict]:
+    """Rule-based result for every review, tagged with the fallback reason."""
+    results = []
+    for text in normalized:
+        entry = _fallback_entry(text)
+        entry["source"] = "fallback"
+        entry["fallback_reason"] = reason
+        results.append(entry)
+    return results
+
+
+def rule_based_results(reviews: list[str], reason: str) -> list[dict]:
+    """Public rule-based fallback for a list of *raw* review strings.
+
+    Normalizes each review and returns tagged ``source='fallback'`` entries with
+    the given ``reason``. Used by the upload router when a batch times out or the
+    overall deadline is hit, so no review is ever dropped.
+    """
+    return _fallback_results([normalize(r) for r in reviews], reason)
+
+
 def analyze_reviews(reviews: list[str]) -> list[dict]:
-    """Analyze up to MAX_BATCH reviews; one result object per review, in order."""
+    """Analyze up to MAX_BATCH reviews; one result object per review, in order.
+
+    Each result object also carries ``source`` ('qwen' | 'fallback') and
+    ``fallback_reason`` (None when the model answered, else why we degraded).
+    """
     if not reviews:
         raise ValueError("reviews list must not be empty")
     if len(reviews) > MAX_BATCH:
@@ -276,21 +327,54 @@ def analyze_reviews(reviews: list[str]) -> list[dict]:
 
     if API_KEY:
         prompt = _build_user_prompt(normalized)
+        last_exc: Exception | None = None
         for attempt in range(1, ATTEMPTS + 1):
             try:
-                parsed = _extract_json_array(_call_model(prompt))
-                results = []
-                for i in range(len(reviews)):
-                    try:
-                        results.append(_coerce_entry(parsed[i]))
-                    except (IndexError, TypeError):
-                        logger.warning("bad model output for review %d, using fallback", i)
-                        results.append(_fallback_entry(normalized[i]))
-                return results
+                parsed = _extract_json_array(_call_model(prompt, len(normalized)))
             except Exception as exc:  # timeout, API error, JSON parse error
-                logger.warning("Qwen call attempt %d/%d failed: %s", attempt, ATTEMPTS, exc)
-        logger.error("Qwen unavailable after %d attempts, using rule-based fallback", ATTEMPTS)
-    else:
-        logger.warning("DASHSCOPE_API_KEY not set, using rule-based fallback")
+                last_exc = exc
+                logger.warning(
+                    "Qwen call attempt %d/%d failed — %s: %s",
+                    attempt, ATTEMPTS, type(exc).__name__, exc,
+                )
+                continue
+            # Model returned parseable output; build per-review results.
+            results = []
+            for i in range(len(reviews)):
+                try:
+                    entry = _coerce_entry(parsed[i])
+                    entry["source"] = "qwen"
+                    entry["fallback_reason"] = None
+                    results.append(entry)
+                except (IndexError, TypeError) as exc:
+                    logger.warning(
+                        "Qwen output unusable for review %d — falling back to "
+                        "rule-based: %s: %s",
+                        i, type(exc).__name__, exc,
+                    )
+                    entry = _fallback_entry(normalized[i])
+                    entry["source"] = "fallback"
+                    entry["fallback_reason"] = (
+                        f"bad model output ({type(exc).__name__}: {exc})"
+                    )
+                    results.append(entry)
+            return results
+        # Every attempt failed → rule-based fallback for the whole batch.
+        attempts_word = "attempt" if ATTEMPTS == 1 else "attempts"
+        reason = (
+            f"Qwen unavailable after {ATTEMPTS} {attempts_word} "
+            f"({type(last_exc).__name__}: {last_exc})"
+            if last_exc is not None
+            else f"Qwen unavailable after {ATTEMPTS} {attempts_word}"
+        )
+        logger.error(
+            "Falling back to rule-based for all %d review(s) — %s: %s",
+            len(reviews), type(last_exc).__name__ if last_exc else "Unknown", last_exc,
+        )
+        return _fallback_results(normalized, reason)
 
-    return [_fallback_entry(r) for r in normalized]
+    logger.warning(
+        "DASHSCOPE_API_KEY not set — falling back to rule-based for all "
+        "%d review(s)", len(reviews),
+    )
+    return _fallback_results(normalized, "DASHSCOPE_API_KEY not set")

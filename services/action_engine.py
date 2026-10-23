@@ -10,8 +10,10 @@ import json
 import logging
 import os
 import re
+import time
 
 from dotenv import load_dotenv
+import httpx
 from openai import OpenAI
 
 load_dotenv()
@@ -23,8 +25,15 @@ BASE_URL = os.getenv(
     "DASHSCOPE_BASE_URL", "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"
 )
 MODEL = os.getenv("QWEN_MODEL", "qwen-plus-2025-07-28")
-TIMEOUT_SECONDS = 30.0
-ATTEMPTS = 2
+# Tight budgets for the action-layer Qwen calls. These were the hidden cost:
+# per-aspect reply generation ran sequentially with thinking mode ON and no
+# token cap. Now: short read + fast connect, low max_tokens, thinking OFF, and
+# a single attempt so a slow call drops to the deterministic template fast.
+REPLY_TIMEOUT = httpx.Timeout(15.0, connect=5.0)
+SUMMARY_TIMEOUT = httpx.Timeout(20.0, connect=5.0)
+REPLY_MAX_TOKENS = 120
+SUMMARY_MAX_TOKENS = 320
+ATTEMPTS = 1
 
 # Confidence threshold for auto-reply generation
 REPLY_CONFIDENCE_THRESHOLD = 0.75
@@ -85,7 +94,7 @@ def _call_qwen_for_reply(aspect: str, review_snippet: str) -> str:
     """Generate an auto-reply via Qwen API."""
     client = OpenAI(
         api_key=API_KEY, base_url=BASE_URL,
-        timeout=TIMEOUT_SECONDS, max_retries=0,
+        timeout=REPLY_TIMEOUT, max_retries=0,
     )
 
     system_prompt = (
@@ -101,39 +110,71 @@ def _call_qwen_for_reply(aspect: str, review_snippet: str) -> str:
         "Generate a short apologetic reply (Roman Urdu + English mix):"
     )
 
-    response = client.chat.completions.create(
-        model=MODEL,
-        temperature=0.7,
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt},
-        ],
+    started = time.perf_counter()
+    try:
+        response = client.chat.completions.create(
+            model=MODEL,
+            temperature=0.7,
+            max_tokens=REPLY_MAX_TOKENS,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ],
+            extra_body={"enable_thinking": False},
+        )
+    except Exception as exc:
+        logger.info(
+            "Qwen reply call failed after %.2fs (aspect=%s) — %s: %s",
+            time.perf_counter() - started, aspect, type(exc).__name__, exc,
+        )
+        raise
+    logger.info(
+        "Qwen reply call completed in %.2fs (aspect=%s)",
+        time.perf_counter() - started, aspect,
     )
-
     return response.choices[0].message.content.strip()
 
 
-def generate_auto_reply(aspect_dict: dict, review_text: str = "") -> str:
-    """Generate an auto-reply draft for a negative aspect.
+def _template_reply(aspect_name: str) -> str:
+    """Deterministic template reply for an aspect (no API call)."""
+    return _REPLY_TEMPLATES.get(aspect_name.lower(), _DEFAULT_REPLY)
 
-    Args:
-        aspect_dict: Dict with 'aspect', 'sentiment', 'confidence' keys.
-        review_text: Optional original review text for context.
 
-    Returns:
-        Short reply draft (Roman Urdu + English mix).
+def needs_auto_reply(aspect_dict: dict) -> bool:
+    """Whether this aspect warrants a Qwen auto-reply (negative + confident)."""
+    return (
+        aspect_dict.get("sentiment") == "negative"
+        and aspect_dict.get("confidence", 0.0) >= REPLY_CONFIDENCE_THRESHOLD
+    )
+
+
+def template_auto_reply(aspect_dict: dict) -> str:
+    """Fast template-only reply, used when a Qwen reply call times out or the
+    upload deadline has been reached."""
+    return _template_reply(aspect_dict.get("aspect", "overall"))
+
+
+def generate_auto_reply_detailed(
+    aspect_dict: dict, review_text: str = ""
+) -> tuple[str, str]:
+    """Generate a reply and report its provenance.
+
+    Returns ``(reply, source)`` where ``source`` is one of:
+      - ``"skip"``     — aspect doesn't qualify (not negative / low confidence)
+      - ``"qwen"``     — model produced the reply
+      - ``"template"`` — deterministic template (no API key, or call failed)
     """
     aspect_name = aspect_dict.get("aspect", "overall")
     confidence = aspect_dict.get("confidence", 0.0)
 
     # Only generate replies for high-confidence negative aspects
     if confidence < REPLY_CONFIDENCE_THRESHOLD:
-        return ""
+        return "", "skip"
 
     if API_KEY:
         for attempt in range(1, ATTEMPTS + 1):
             try:
-                return _call_qwen_for_reply(aspect_name, review_text)
+                return _call_qwen_for_reply(aspect_name, review_text), "qwen"
             except Exception as exc:
                 logger.warning(
                     "Qwen reply attempt %d/%d failed: %s", attempt, ATTEMPTS, exc
@@ -141,7 +182,16 @@ def generate_auto_reply(aspect_dict: dict, review_text: str = "") -> str:
         logger.warning("Qwen unavailable for reply, using template fallback")
 
     # Template fallback
-    return _REPLY_TEMPLATES.get(aspect_name.lower(), _DEFAULT_REPLY)
+    return _template_reply(aspect_name), "template"
+
+
+def generate_auto_reply(aspect_dict: dict, review_text: str = "") -> str:
+    """Generate an auto-reply draft for a negative aspect (text only).
+
+    Thin wrapper over :func:`generate_auto_reply_detailed` kept for existing
+    callers (e.g. evaluation/generate_demo_cache.py).
+    """
+    return generate_auto_reply_detailed(aspect_dict, review_text)[0]
 
 
 def generate_auto_replies_for_review(review_result: dict, review_text: str = "") -> list[dict]:
@@ -169,7 +219,7 @@ def _call_qwen_for_summary(reviews_data: list[dict]) -> str:
     """Generate an executive summary via Qwen API."""
     client = OpenAI(
         api_key=API_KEY, base_url=BASE_URL,
-        timeout=TIMEOUT_SECONDS, max_retries=0,
+        timeout=SUMMARY_TIMEOUT, max_retries=0,
     )
 
     system_prompt = (
@@ -197,15 +247,27 @@ def _call_qwen_for_summary(reviews_data: list[dict]) -> str:
         + "\n\nGenerate a 2-4 sentence executive summary:"
     )
 
-    response = client.chat.completions.create(
-        model=MODEL,
-        temperature=0.3,
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt},
-        ],
+    started = time.perf_counter()
+    try:
+        response = client.chat.completions.create(
+            model=MODEL,
+            temperature=0.3,
+            max_tokens=SUMMARY_MAX_TOKENS,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ],
+            extra_body={"enable_thinking": False},
+        )
+    except Exception as exc:
+        logger.info(
+            "Qwen summary call failed after %.2fs — %s: %s",
+            time.perf_counter() - started, type(exc).__name__, exc,
+        )
+        raise
+    logger.info(
+        "Qwen summary call completed in %.2fs", time.perf_counter() - started,
     )
-
     return response.choices[0].message.content.strip()
 
 
